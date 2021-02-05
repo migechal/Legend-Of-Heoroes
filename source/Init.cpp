@@ -25,10 +25,9 @@
             exit(-2);                                                             \
         }                                                                         \
     }
+
 Init::Init(std::string baseDirectoryLocation, int tileSize):
     baseDirectoryLocation(this->GetResourcePath(baseDirectoryLocation)), tileSize(tileSize){
-Init::Init(std::string baseDirectoryLocation):
-    baseDirectoryLocation(this->GetResourcePath(baseDirectoryLocation)){
 	std::cout << baseDirectoryLocation << std::endl;
 }
 
@@ -101,9 +100,6 @@ std::vector<SDL_Surface*> Init::getCSVRow(std::string CSVFile, int row){
 SDL_Surface *Init::imageLoader(std::string file)
 {
 
-
-SDL_Surface *Init::BMPloader(std::string file)
-{
 	SDL_Log(file.c_str());
 	std::string temp = file;
 	std::cout << baseDirectoryLocation << std::endl;
@@ -113,9 +109,6 @@ SDL_Surface *Init::BMPloader(std::string file)
 
     SDL_Surface *bp = IMG_Load(file.c_str());
     SDL_Log(file.c_str());
-	SDL_Log(file.c_str());
-    SDL_Surface *bp = SDL_LoadBMP(file.c_str());
-    SDL_Log(file.c_str(), " Has been loaded successfully.");
     CHECK_RESULT(bp);
     return bp;
 }

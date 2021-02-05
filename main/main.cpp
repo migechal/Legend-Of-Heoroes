@@ -29,6 +29,7 @@ int main(int argc, char **argv){
 
     SDL_Init(SDL_INIT_EVERYTHING);
 
+
     Init init(argv[0], tileSize); //Create Init class
 
 
@@ -106,28 +107,6 @@ int main(int argc, char **argv){
 
     bool gameIsRunning = true;
     while(gameIsRunning && location == INGAME){
-    Init init(argv[0]); //Create Init class
-
-    SDL_Surface* background = nullptr;
-    SDL_Surface* screen = nullptr;
-    SDL_Surface* player = nullptr;
-    SDL_Window* window = nullptr;
-
-    int windowWidth = init.getDisplayMode().w;
-    int windowHeight = init.getDisplayMode().h;
-
-    window = SDL_CreateWindow("Legend Of Heros", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_FULLSCREEN); //Create window object
-
-    screen = SDL_GetWindowSurface(window);
-
-
-
-    background = init.BMPloader("/assets/Map/TestMap.bmp"); //Create background which will be used to clear the screen as well
-
-
-    bool gameIsRunning = true;
-    SDL_Event e;
-    while(gameIsRunning){
     	while(SDL_PollEvent(&e)){
     		switch(e.type){
     			case SDL_QUIT:

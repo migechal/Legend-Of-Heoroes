@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include <SDL2/SDL_rect.h>
+#include <SDL2/SDL_rect.h>
 #define CHECK_RESULT(fnc)                                                         \
     {                                                                             \
         auto res = fnc;                                                           \
@@ -13,7 +14,6 @@
             exit(-2);                                                             \
         }                                                                         \
     }
-#include <SDL2/SDL_rect.h>
 
 Player::Player(std::string Name):
     Name(Name){}
