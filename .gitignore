@@ -1,9 +1,7 @@
 /bin/
-<<<<<<< HEAD
+bazel-*
 .classpath
 .project
 .vscode
 assets/Map/Map.jpeg
 assets/Map/Map.bmp
-=======
->>>>>>> 968cb7366b22835e47b43e7986aed4396649b6d6
