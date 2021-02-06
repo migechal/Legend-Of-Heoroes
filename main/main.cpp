@@ -1,5 +1,7 @@
 #include <bits/stdc++.h>
 #include <SDL2/SDL.h>
+#include <map>
+#include <string_view>
 #include "header/Init.h"
 #include "header/Player.h"
 #include "header/Menu.h"
@@ -40,18 +42,18 @@ int main(int argc, char **argv){
 
     backgroundRect.x = 0;
     backgroundRect.y = 0;
-    backgroundRect.h = tileSize * 40;
-    backgroundRect.w = tileSize * 80;
+    backgroundRect.h = windowHeight;
+    backgroundRect.w = windowWidth;
 
     SDL_Surface* loading = nullptr;
-
+    SDL_Surface* tiles = nullptr;
     SDL_Surface* background = nullptr;
     SDL_Surface* screen = nullptr;
     SDL_Window* window = nullptr;
     SDL_SetSurfaceBlendMode(background, SDL_BLENDMODE_NONE);
 
 
-
+    tiles = init.imageLoader("assets/tiles.png");
     loading = init.imageLoader("assets/Loading/Loading.jpeg");
     const int scale = 4;
     window = SDL_CreateWindow("Loading...", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth/scale, windowHeight/scale, SDL_WINDOW_BORDERLESS); //Create loading window object
@@ -70,7 +72,7 @@ int main(int argc, char **argv){
     window = SDL_CreateWindow("Legend Of Heros", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_FULLSCREEN); //Create window object
     screen = SDL_GetWindowSurface(window);
 
-    bool menuIsRunning = true;
+    bool menuIsRunning = false;
     std::string name = "mik";
     static int location = MAINMENU;
 
@@ -101,10 +103,8 @@ int main(int argc, char **argv){
         SDL_UpdateWindowSurface(window);
     }
 
-    return 0;
-
     Player *player = new Player(name);
-
+    location = INGAME;
     bool gameIsRunning = true;
     while(gameIsRunning && location == INGAME){
     	while(SDL_PollEvent(&e)){
@@ -119,9 +119,12 @@ int main(int argc, char **argv){
     				}
     		}
     	}
-        CHECK_RESULT(!SDL_BlitScaled(background, &backgroundRect, screen, NULL));
-        std::cout << backgroundRect.h << " " << backgroundRect.w << "               " << backgroundRect.x << " " << backgroundRect.y <<std::endl;
-    	SDL_BlitSurface(background, NULL, screen, NULL);
+        for (auto const& pair : init.getCSVRow("assets/Map/Back.csv", 1)) {
+            SDL_Rect pos {pair.first, pair.second, tileSize, tileSize};
+            std::cout << pos.x << " "<< pos.y << " " << pos.w << " " << pos.h << std::endl;
+            SDL_BlitScaled(tiles, &pos, screen, &pos);
+            SDL_Delay(100);
+        }
     	SDL_UpdateWindowSurface(window);
     }
     SDL_FreeSurface(screen);

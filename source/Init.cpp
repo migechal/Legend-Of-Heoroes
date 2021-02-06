@@ -2,8 +2,8 @@
 
 #include "header/Init.h"
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL.h>
 #include <string>
+#include <map>
 #include <iostream>
 #include <zip.h>
 #include <minizip/mztools.h>
@@ -12,7 +12,6 @@
 #include <iostream>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
-
 
 #define CHECK_RESULT(fnc)                                                         \
     {                                                                             \
@@ -26,9 +25,10 @@
         }                                                                         \
     }
 
-Init::Init(std::string baseDirectoryLocation, int tileSize):
-    baseDirectoryLocation(this->GetResourcePath(baseDirectoryLocation)), tileSize(tileSize){
-	std::cout << baseDirectoryLocation << std::endl;
+Init::Init(std::string dir, int tileSize) : tileSize(tileSize)
+{
+    baseDirectoryLocation = GetResourcePath(dir);
+    std::cout << baseDirectoryLocation << std::endl;
 }
 
 int Init::getSettingsFromJson(std::string path, std::string tree, std::string child)
@@ -49,12 +49,12 @@ int Init::getSettingsFromJson(std::string path, std::string tree, std::string ch
     return num;
 }
 
-
 std::string Init::GetResourcePath(std::string applicationPath)
 {
-	if(!getenv("LEGEND_OF_HEROES")){
-		std::cout << "Failed to get variable" << std::endl;
-	}
+    if (!getenv("LEGEND_OF_HEROES"))
+    {
+        std::cout << "Failed to get variable" << std::endl;
+    }
     auto envResourcePath = getenv("LEGEND_OF_HEROES");
     std::cout << "envResourcePath:  " << (envResourcePath ? envResourcePath : "NULL")
               << std::endl;
@@ -77,35 +77,67 @@ std::string Init::GetResourcePath(std::string applicationPath)
     return applicationPath + "";
 }
 
-std::fstream& Init::gotoLine(std::fstream& file, unsigned int num){
+std::string Init::getBaseDirectory()
+{
+    return this->baseDirectoryLocation;
+}
+
+std::fstream &Init::gotoLine(std::fstream &file, size_t num)
+{
     file.seekg(std::ios::beg);
-    for(int i=0; i < num - 1; ++i){
-        file.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+    for (size_t i = 0; i < num - 1; ++i)
+    {
+        file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
     return file;
 }
 
-std::vector<SDL_Surface*> Init::getCSVRow(std::string CSVFile, int row){
-    std::vector<SDL_Surface*> lineSurface;
+std::map<int, int> Init::getCSVRow(std::string CSVFile, int row)
+{
+    std::map<int, int> location;
+    std::string line;
     auto temp = CSVFile;
     CSVFile = baseDirectoryLocation + temp;
     std::fstream file(CSVFile);
     //
     this->gotoLine(file, row);
-
+    file >> line;
+    int pos = 0;
+    for (size_t i = 0; i < line.length(); ++i)
+    {
+        int currentNum = 0;
+        for (; line[pos] != ','; ++pos)
+        {
+            if (line[pos] != '-')
+            {
+                currentNum += line[pos] * 10 * i;
+            }
+        }
+        if (currentNum != 0)
+        {
+            for (int column = 0; column < 2016; column += tileSize)
+            {
+                if (tileSize * currentNum < 1024)
+                {
+                    location[column, currentNum * tileSize];
+                }
+            }
+        }
+        ++pos;
+    }
     //
-    return lineSurface;
+    return location;
 }
 
 SDL_Surface *Init::imageLoader(std::string file)
 {
 
-	SDL_Log(file.c_str());
-	std::string temp = file;
-	std::cout << baseDirectoryLocation << std::endl;
-	SDL_Log(baseDirectoryLocation.c_str());
-	file = baseDirectoryLocation;
-	file.append(temp.c_str());
+    SDL_Log(file.c_str());
+    std::string temp = file;
+    std::cout << baseDirectoryLocation << std::endl;
+    SDL_Log(baseDirectoryLocation.c_str());
+    file = baseDirectoryLocation;
+    file.append(temp.c_str());
 
     SDL_Surface *bp = IMG_Load(file.c_str());
     SDL_Log(file.c_str());
@@ -113,7 +145,8 @@ SDL_Surface *Init::imageLoader(std::string file)
     return bp;
 }
 
-SDL_DisplayMode Init::getDisplayMode(){
+SDL_DisplayMode Init::getDisplayMode()
+{
     SDL_DisplayMode DM;
     SDL_GetCurrentDisplayMode(0, &DM);
     return DM;
