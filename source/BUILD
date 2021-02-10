@@ -6,6 +6,12 @@ cc_library(
         "IMGUI_IMPL_OPENGL_LOADER_GL3W",
         "REENTRANT",
     ],
+    copts = [
+        "-std=c++17",
+        "-g",
+        "-Wall",
+        "-Wformat",
+    ],
     deps = [
         "//header:HeaderFiles",
         "//imgui:imgui_lib",

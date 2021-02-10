@@ -1,7 +1,9 @@
 #pragma once
 #include <string>
+#include <vector>
+
 #include <SDL2/SDL.h>
-#include <map>
+
 class Init{
     const int tileSize = 32;
     std::string baseDirectoryLocation;
@@ -11,7 +13,7 @@ class Init{
 public:
     Init(std::string dir, int tileSize);
     SDL_Surface *imageLoader(std::string file);
-    std::map<int, int> getCSVRow(std::string CSVFile, int row);
+    std::vector<std::vector<int>>  getCSVvector(std::string CSVFile);
     SDL_DisplayMode getDisplayMode();
     std::string getBaseDirectory();
 };

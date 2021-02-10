@@ -92,41 +92,56 @@ std::fstream &Init::gotoLine(std::fstream &file, size_t num)
     return file;
 }
 
-std::map<int, int> Init::getCSVRow(std::string CSVFile, int row)
+
+
+// std::vector<std::vector<int>> Init::getCSVvector(std::string CSVFile){
+//     std::vector<std::vector<int>> content;
+//     std::string line;
+//     auto temp = CSVFile;
+//     CSVFile = baseDirectoryLocation + temp;
+//     std::fstream file(CSVFile);
+//     for(size_t i = 0; i < 400; ++i){
+//         for(size_t j = 0; j < 400; ++j){
+//             int n;
+//             file >> n;
+//             std::cout << n << std::endl;
+//         }
+//     }
+// }
+std::vector<std::vector<int>> Init::getCSVvector(std::string CSVFile)
 {
-    std::map<int, int> location;
+    std::vector<std::vector<int>> content;
     std::string line;
     auto temp = CSVFile;
     CSVFile = baseDirectoryLocation + temp;
     std::fstream file(CSVFile);
-    //
-    this->gotoLine(file, row);
-    file >> line;
-    int pos = 0;
-    for (size_t i = 0; i < line.length(); ++i)
+
+    while (getline(file, line))
     {
-        int currentNum = 0;
-        for (; line[pos] != ','; ++pos)
+        std::vector<int> lineContent;
+        for (size_t i = 0; i < line.length(); ++i)
         {
-            if (line[pos] != '-')
+            int currentNum = -1;
+            int digit = 1;
+            bool first = true;
+            for (; line[i] != ','; ++i && ++digit)
             {
-                currentNum += line[pos] * 10 * i;
-            }
-        }
-        if (currentNum != 0)
-        {
-            for (int column = 0; column < 2016; column += tileSize)
-            {
-                if (tileSize * currentNum < 1024)
+                if (first && line[i] != '-')
                 {
-                    location[column, currentNum * tileSize];
+                    currentNum = 0;
+                    first = false;
                 }
-            }
+                if (line[i] != '-')
+                {
+                    currentNum += line[i] + 10 * digit;
+                }
+            } ++i;
+            lineContent.push_back(currentNum);
         }
-        ++pos;
+        content.push_back(lineContent);
     }
-    //
-    return location;
+
+    return content;
 }
 
 SDL_Surface *Init::imageLoader(std::string file)
