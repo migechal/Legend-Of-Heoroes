@@ -92,22 +92,6 @@ std::fstream &Init::gotoLine(std::fstream &file, size_t num)
     return file;
 }
 
-
-
-// std::vector<std::vector<int>> Init::getCSVvector(std::string CSVFile){
-//     std::vector<std::vector<int>> content;
-//     std::string line;
-//     auto temp = CSVFile;
-//     CSVFile = baseDirectoryLocation + temp;
-//     std::fstream file(CSVFile);
-//     for(size_t i = 0; i < 400; ++i){
-//         for(size_t j = 0; j < 400; ++j){
-//             int n;
-//             file >> n;
-//             std::cout << n << std::endl;
-//         }
-//     }
-// }
 std::vector<std::vector<int>> Init::getCSVvector(std::string CSVFile)
 {
     std::vector<std::vector<int>> content;
@@ -121,22 +105,21 @@ std::vector<std::vector<int>> Init::getCSVvector(std::string CSVFile)
         std::vector<int> lineContent;
         for (size_t i = 0; i < line.length(); ++i)
         {
-            int currentNum = -1;
-            int digit = 1;
-            bool first = true;
-            for (; line[i] != ','; ++i && ++digit)
+            int currentNum = 0;
+            bool sign = true;
+            for (; isdigit(line[i]) || line[i] == '-'; ++i)
             {
-                if (first && line[i] != '-')
+                if (line[i] == '-')
                 {
-                    currentNum = 0;
-                    first = false;
+                    sign = false;
                 }
-                if (line[i] != '-')
+                else
                 {
-                    currentNum += line[i] + 10 * digit;
+                    currentNum *= 10;
+                    currentNum += line[i] - '0';
                 }
-            } ++i;
-            lineContent.push_back(currentNum);
+            }
+            lineContent.push_back(sign ? currentNum : -currentNum);
         }
         content.push_back(lineContent);
     }

@@ -126,7 +126,7 @@ int main(int argc, char **argv)
                 }
             }
         }
-        std::vector<std::vector<int>> vec = init.getCSVvector("assets/Map/Back.csv");
+        std::vector<std::vector<int>> vec = init.getCSVvector("assets/Map/Middle.csv");
         if (vec.empty())
         {
             SDL_Log("Couldn't load CSV file");
@@ -136,25 +136,27 @@ int main(int argc, char **argv)
         {
             for (size_t col = 0; col < vec[row].size(); ++col)
             {
+                int orig = vec[row][col];
                 SDL_Rect position{static_cast<int>(tileSize * row), static_cast<int>(tileSize * col), tileSize, tileSize};
 
                 SDL_Rect cut{0, 0, tileSize, tileSize};
-                if (savedTiles.find(vec[row][col]) == savedTiles.end())
+                if (savedTiles.count(vec[row][col]) > 0)
                 {
                     cut = savedTiles.find(vec[row][col])->second;
+                    std::cout << vec[row][col] << std::endl;
+                    SDL_BlitScaled(tiles, &cut, screen, &position);
                 }
                 else
                 {
-                    int orig = vec[row][col];
                     if (vec[row][col] != -1)
                     {
-
-                        for (; (vec[row][col] * tileSize) > 1024; ++cut.y)
+                        int vecNum = vec[row][col];
+                        for (; (vecNum * tileSize) > 1024; cut.y += 32)
                         {
-                            vec[row][col] -= 1024;
-                            std::cout << vec[row][col] << std::endl;
+                            vecNum -= 1024;
+                            std::cout << vecNum << std::endl;
                         }
-                        cut.x = abs(vec[row][col]);
+                        cut.x = abs(vecNum);
                         SDL_BlitScaled(tiles, &cut, screen, &position);
                     }
                     savedTiles[orig] = cut;
