@@ -20,6 +20,8 @@
         {                                                                         \
             std::cout << "ERR: " << __FILE__ << "(" << __LINE__ << ") SDL_Error(" \
                       << SDL_GetError() << ")  err: " << res << " in " << #fnc    \
+                      << std::endl                                                \
+                      << "Maybe ;; export LEGEND_OF_HEROES=`pwd` ;; will fix?"    \
                       << std::endl;                                               \
             exit(-2);                                                             \
         }                                                                         \

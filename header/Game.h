@@ -6,11 +6,10 @@
 #include <SDL2/SDL_surface.h>
 class Game
 {
-    std::map<int, SDL_Rect> savedTiles;
     int tileSize;
     SDL_Surface *tiles;
 
 public:
     Game(int tileSize, SDL_Surface *tiles);
-    void printTiles(std::vector<std::vector<int>> csv, SDL_Surface *screen);
+    void printTiles(std::vector<std::vector<std::vector<int>>> csv, SDL_Surface *screen);
 };

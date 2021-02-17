@@ -5,6 +5,7 @@
 #include "header/Init.h"
 #include "header/Player.h"
 #include "header/Menu.h"
+#include "header/Game.h"
 #define CHECK_RESULT(fnc)                                                         \
     {                                                                             \
         auto res = fnc;                                                           \
@@ -69,6 +70,8 @@ int main(int argc, char **argv)
     window = SDL_CreateWindow("Legend Of Heros", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_FULLSCREEN); //Create window object
     screen = SDL_GetWindowSurface(window);
 
+    Game doGame(tileSize, tiles);
+
     bool menuIsRunning = false;
     std::string name = "mik";
     static int location = MAINMENU;
@@ -109,6 +112,7 @@ int main(int argc, char **argv)
     location = INGAME;
     bool gameIsRunning = true;
     std::map<int, SDL_Rect> savedTiles;
+
     while (gameIsRunning && location == INGAME)
     {
         while (SDL_PollEvent(&e))
@@ -126,43 +130,8 @@ int main(int argc, char **argv)
                 }
             }
         }
-        std::vector<std::vector<int>> vec = init.getCSVvector("assets/Map/Middle.csv");
-        if (vec.empty())
-        {
-            SDL_Log("Couldn't load CSV file");
-            return -1;
-        }
-        for (size_t row = 0; row < vec.size(); ++row)
-        {
-            for (size_t col = 0; col < vec[row].size(); ++col)
-            {
-                int orig = vec[row][col];
-                SDL_Rect position{static_cast<int>(tileSize * row), static_cast<int>(tileSize * col), tileSize, tileSize};
-
-                SDL_Rect cut{0, 0, tileSize, tileSize};
-                if (savedTiles.count(vec[row][col]) > 0)
-                {
-                    cut = savedTiles.find(vec[row][col])->second;
-                    std::cout << vec[row][col] << std::endl;
-                    SDL_BlitScaled(tiles, &cut, screen, &position);
-                }
-                else
-                {
-                    if (vec[row][col] != -1)
-                    {
-                        int vecNum = vec[row][col];
-                        for (; (vecNum * tileSize) > 1024; cut.y += 32)
-                        {
-                            vecNum -= 1024;
-                            std::cout << vecNum << std::endl;
-                        }
-                        cut.x = abs(vecNum);
-                        SDL_BlitScaled(tiles, &cut, screen, &position);
-                    }
-                    savedTiles[orig] = cut;
-                }
-            }
-        }
+        doGame.printTiles({init.getCSVvector("assets/Map/Back.csv"), init.getCSVvector("assets/Map/Middle.csv"), init.getCSVvector("assets/Map/Front.csv")}, screen);
+        // doGame.printTiles({init.getCSVvector("assets/Map/Test.csv")}, screen);
         SDL_UpdateWindowSurface(window);
     }
     SDL_FreeSurface(screen);
