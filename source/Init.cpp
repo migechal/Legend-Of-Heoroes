@@ -33,11 +33,11 @@ Init::Init(std::string dir, int tileSize) : tileSize(tileSize)
     std::cout << baseDirectoryLocation << std::endl;
 }
 
-int Init::getSettingsFromJson(std::string path, std::string tree, std::string child)
+std::string Init::getSettingsFromJson(std::string path, std::string tree, std::string child)
 {
-    std::string pathSettings = path + "settings/config.json";
+    std::string pathSettings = baseDirectoryLocation + path;
     std::cout << "Settings from " << pathSettings << std::endl;
-    int num;
+    std::string value;
     namespace pt = boost::property_tree;
     pt::ptree loadPtreeRoot;
     pt::read_json(pathSettings, loadPtreeRoot);
@@ -47,8 +47,8 @@ int Init::getSettingsFromJson(std::string path, std::string tree, std::string ch
     //! Get child of file
     temp = loadPtreeRoot.get_child(tree);
     tsize = temp.get_child(child);
-    num = tsize.get_value<int>();
-    return num;
+    value = tsize.get_value<std::string>();
+    return value;
 }
 
 std::string Init::GetResourcePath(std::string applicationPath)

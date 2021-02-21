@@ -6,6 +6,7 @@
 #include "header/Player.h"
 #include "header/Menu.h"
 #include "header/Game.h"
+#include "header/Input.h"
 #define CHECK_RESULT(fnc)                                                         \
     {                                                                             \
         auto res = fnc;                                                           \
@@ -33,6 +34,11 @@ int main(int argc, char **argv)
     SDL_Init(SDL_INIT_EVERYTHING);
 
     Init init(argv[0], tileSize); //Create Init class
+
+    const std::string UP = init.getSettingsFromJson("settings/config.json", "Buttons", "up");
+    const std::string DOWN = init.getSettingsFromJson("settings/config.json", "Buttons", "down");
+    const std::string RIGHT = init.getSettingsFromJson("settings/config.json", "Buttons", "right");
+    const std::string LEFT = init.getSettingsFromJson("settings/config.json", "Buttons", "left");
 
     int windowWidth = init.getDisplayMode().w;
     int windowHeight = init.getDisplayMode().h;
@@ -69,8 +75,6 @@ int main(int argc, char **argv)
     SDL_FreeSurface(loading);
     window = SDL_CreateWindow("Legend Of Heros", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_FULLSCREEN); //Create window object
     screen = SDL_GetWindowSurface(window);
-
-    Game doGame(tileSize, tiles);
 
     bool menuIsRunning = false;
     std::string name = "mik";
@@ -130,8 +134,13 @@ int main(int argc, char **argv)
                 }
             }
         }
-        doGame.printTiles({init.getCSVvector("assets/Map/Back.csv"), init.getCSVvector("assets/Map/Middle.csv"), init.getCSVvector("assets/Map/Front.csv")}, screen);
-        // doGame.printTiles({init.getCSVvector("assets/Map/Test.csv")}, screen);
+        std::cout << UP << std::endl;
+        if (Keyboard::getInstance().isPressed(SDL_GetScancodeFromName(UP.c_str())))
+        {
+            Camera::camera()->move({1, 1});
+        }
+        CHECK_RESULT(Game::getInstance(init.getBaseDirectory())->printTiles({init.getCSVvector("assets/Map/Back.csv"), init.getCSVvector("assets/Map/Middle.csv"), init.getCSVvector("assets/Map/Front.csv")}, screen, tileSize, tiles, Camera::camera()->getPos()));
+
         SDL_UpdateWindowSurface(window);
     }
     SDL_FreeSurface(screen);
