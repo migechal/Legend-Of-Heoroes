@@ -7,7 +7,7 @@ class Command
 
 public:
     virtual ~Command(){};
-    virtual void execute(int amount);
+    virtual void execute(int amount) = 0;
 };
 
 class Up : public Command

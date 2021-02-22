@@ -7,6 +7,7 @@
 #include "header/Menu.h"
 #include "header/Game.h"
 #include "header/KeyboardHandler.h"
+#include "header/Input.h"
 #define CHECK_RESULT(fnc)                                                         \
     {                                                                             \
         auto res = fnc;                                                           \
@@ -142,13 +143,14 @@ int main(int argc, char **argv)
                 }
             }
         }
-
-        Command *keyboardCommand = keyboard.handleInput();
-        if (keyboardCommand != nullptr)
-        {
-            keyboardCommand->execute(cameraMovementByPixels);
-            //
-        }
+        if (Keyboard::getInstance().isPressed(UP))
+            Camera::camera()->move({0, -cameraMovementByPixels});
+        if (Keyboard::getInstance().isPressed(DOWN))
+            Camera::camera()->move({0, cameraMovementByPixels});
+        if (Keyboard::getInstance().isPressed(LEFT))
+            Camera::camera()->move({-cameraMovementByPixels, 0});
+        if (Keyboard::getInstance().isPressed(RIGHT))
+            Camera::camera()->move({cameraMovementByPixels, 0});
 
         CHECK_RESULT(Game::getInstance(init.getBaseDirectory())->printTiles({init.getCSVvector("assets/Map/Back.csv"), init.getCSVvector("assets/Map/Middle.csv"), init.getCSVvector("assets/Map/Front.csv")}, screen, tileSize, tiles, Camera::camera()->getPos()));
 
