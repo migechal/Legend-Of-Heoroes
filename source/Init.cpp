@@ -31,8 +31,13 @@ Init::Init(std::string dir, int tileSize) : tileSize(tileSize)
 {
     baseDirectoryLocation = GetResourcePath(dir);
     std::cout << baseDirectoryLocation << std::endl;
+    CHECK_RESULT(!exists("settings/exists"));
 }
-
+bool Init::exists(std::string file)
+{
+    std::fstream f((baseDirectoryLocation + file).c_str());
+    return f.fail();
+}
 std::string Init::getSettingsFromJson(std::string path, std::string tree, std::string child)
 {
     std::string pathSettings = baseDirectoryLocation + path;

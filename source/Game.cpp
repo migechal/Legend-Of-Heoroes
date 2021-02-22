@@ -94,7 +94,12 @@ Camera *Camera::camera()
 
 void Camera::move(SDL_Rect loc)
 {
-    cameraPosition = loc;
+    if (cameraPosition.x + loc.x < 0 || cameraPosition.y + loc.y < 0)
+    {
+        return;
+    }
+    cameraPosition.x += loc.x;
+    cameraPosition.y += loc.y;
 }
 SDL_Rect Camera::getPos()
 {

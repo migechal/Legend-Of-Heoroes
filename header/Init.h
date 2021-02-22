@@ -10,6 +10,7 @@ class Init
     std::string baseDirectoryLocation;
     std::fstream &gotoLine(std::fstream &file, size_t num);
     std::string GetResourcePath(std::string applicationPath);
+    bool exists(std::string file);
 
 public:
     Init(std::string dir, int tileSize);

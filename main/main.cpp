@@ -6,7 +6,7 @@
 #include "header/Player.h"
 #include "header/Menu.h"
 #include "header/Game.h"
-#include "header/Input.h"
+#include "header/KeyboardHandler.h"
 #define CHECK_RESULT(fnc)                                                         \
     {                                                                             \
         auto res = fnc;                                                           \
@@ -35,10 +35,18 @@ int main(int argc, char **argv)
 
     Init init(argv[0], tileSize); //Create Init class
 
-    const std::string UP = init.getSettingsFromJson("settings/config.json", "Buttons", "up");
-    const std::string DOWN = init.getSettingsFromJson("settings/config.json", "Buttons", "down");
-    const std::string RIGHT = init.getSettingsFromJson("settings/config.json", "Buttons", "right");
-    const std::string LEFT = init.getSettingsFromJson("settings/config.json", "Buttons", "left");
+    std::vector<std::string> keyNames{
+        init.getSettingsFromJson("settings/config.json", "Buttons", "up"),
+        init.getSettingsFromJson("settings/config.json", "Buttons", "down"),
+        init.getSettingsFromJson("settings/config.json", "Buttons", "left"),
+        init.getSettingsFromJson("settings/config.json", "Buttons", "right")};
+    const SDL_Scancode UP = SDL_GetScancodeFromName(keyNames[0].c_str());
+    const SDL_Scancode DOWN = SDL_GetScancodeFromName(keyNames[1].c_str());
+    const SDL_Scancode LEFT = SDL_GetScancodeFromName(keyNames[2].c_str());
+    const SDL_Scancode RIGHT = SDL_GetScancodeFromName(keyNames[3].c_str());
+    const int cameraMovementByPixels = std::stoi(init.getSettingsFromJson("settings/config.json", "Game", "CameraMovement"));
+
+    KeyboardHandler keyboard({UP, DOWN, LEFT, RIGHT});
 
     int windowWidth = init.getDisplayMode().w;
     int windowHeight = init.getDisplayMode().h;
@@ -134,11 +142,13 @@ int main(int argc, char **argv)
                 }
             }
         }
-        std::cout << UP << std::endl;
-        if (Keyboard::getInstance().isPressed(SDL_GetScancodeFromName(UP.c_str())))
+
+        Command *keyboardCommand = keyboard.handleInput();
+        if (keyboardCommand != nullptr)
         {
-            Camera::camera()->move({1, 1});
+            keyboardCommand->execute(cameraMovementByPixels);
         }
+
         CHECK_RESULT(Game::getInstance(init.getBaseDirectory())->printTiles({init.getCSVvector("assets/Map/Back.csv"), init.getCSVvector("assets/Map/Middle.csv"), init.getCSVvector("assets/Map/Front.csv")}, screen, tileSize, tiles, Camera::camera()->getPos()));
 
         SDL_UpdateWindowSurface(window);

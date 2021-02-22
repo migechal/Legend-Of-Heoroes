@@ -1,8 +1,11 @@
 {
     "Buttons": {
         "up": "w",
-        "down": "d",
+        "down": "s",
         "left": "a",
         "right": "d"
+    },
+    "Game": {
+        "CameraMovement": "1"
     }
 }
