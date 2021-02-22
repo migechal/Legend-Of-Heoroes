@@ -147,6 +147,7 @@ int main(int argc, char **argv)
         if (keyboardCommand != nullptr)
         {
             keyboardCommand->execute(cameraMovementByPixels);
+            //
         }
 
         CHECK_RESULT(Game::getInstance(init.getBaseDirectory())->printTiles({init.getCSVvector("assets/Map/Back.csv"), init.getCSVvector("assets/Map/Middle.csv"), init.getCSVvector("assets/Map/Front.csv")}, screen, tileSize, tiles, Camera::camera()->getPos()));
