@@ -9,28 +9,28 @@
 void Up::execute(int move)
 {
     printf("move = %d\n", move);
-    Camera::camera()->move({0, -move});
+    Camera::getCamera()->move({0, -move});
     printf("up called");
 }
 
 void Down::execute(int move)
 {
     printf("move = %d\n", move);
-    Camera::camera()->move({0, move});
+    Camera::getCamera()->move({0, move});
     printf("down called");
 }
 
 void Left::execute(int move)
 {
     printf("move = %d\n", move);
-    Camera::camera()->move({-move, 0});
+    Camera::getCamera()->move({-move, 0});
     printf("left called");
 }
 
 void Right::execute(int move)
 {
     printf("move = %d\n", move);
-    Camera::camera()->move({move, 0});
+    Camera::getCamera()->move({move, 0});
     printf("right called");
 }
 

@@ -28,7 +28,7 @@
 Init::Init(std::string dir, int tileSize) : tileSize(tileSize)
 {
     baseDirectoryLocation = GetResourcePath(dir);
-    std::cout << baseDirectoryLocation << std::endl;
+
     CHECK_RESULT(!exists("settings/exists"));
 }
 bool Init::exists(std::string file)
@@ -38,6 +38,7 @@ bool Init::exists(std::string file)
 }
 std::string Init::getSettingsFromJson(std::string path, std::string tree, std::string child)
 {
+    std::cout << baseDirectoryLocation << std::endl;
     std::string pathSettings = baseDirectoryLocation + path;
     std::cout << "Settings from " << pathSettings << std::endl;
     std::string value;
@@ -61,8 +62,7 @@ std::string Init::GetResourcePath(std::string applicationPath)
         std::cout << "Failed to get variable" << std::endl;
     }
     auto envResourcePath = getenv("LEGEND_OF_HEROES");
-    std::cout << "envResourcePath:  " << (envResourcePath ? envResourcePath : "NULL")
-              << std::endl;
+
     if (envResourcePath != NULL)
     {
         applicationPath.assign(envResourcePath);

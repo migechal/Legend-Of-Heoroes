@@ -2,20 +2,9 @@
 #include <SDL2/SDL.h>
 #include "header/Game.h"
 #include "header/Init.h"
-std::string Game::baseDir = "";
-std::vector<int> Game::hitboxes = {};
-SDL_Rect Camera::cameraPosition = {};
+SDL_Rect Camera::cameraPosition = {0, 0, 0, 0};
 
-Game *Game::getInstance(std::string baseDirectoryLocation)
-{
-    baseDir = baseDirectoryLocation;
-    static Game *instance = nullptr;
-    if (instance == nullptr)
-    {
-        instance = new Game;
-    }
-    return instance;
-}
+Game::Game(std::string baseDirectoryLocation, int tileSize) : tileSize(tileSize), baseDir(baseDirectoryLocation) {}
 int Game::roundDown(int &num, int toSize)
 {
     for (; num % 32 != 0; --num)
@@ -24,7 +13,7 @@ int Game::roundDown(int &num, int toSize)
     }
     return num;
 }
-int Game::cordinateToTile(int x, int y, int tileSize, std::string tileLocation)
+int Game::cordinateToTile(int x, int y, std::string tileLocation)
 {
     Init *csvGet = new Init(baseDir, tileSize);
     roundDown(x, tileSize);
@@ -34,11 +23,11 @@ int Game::cordinateToTile(int x, int y, int tileSize, std::string tileLocation)
     return csvGet->getCSVvector(tileLocation)[x][y];
 }
 
-bool Game::checkHitbox(int x, int y, int tileSize, std::vector<std::string> tileLocation)
+bool Game::checkHitbox(int x, int y, std::vector<std::string> tileLocation)
 {
     for (size_t i = 0; i < tileLocation.size(); ++i)
     {
-        int temp = cordinateToTile(x, y, tileSize, tileLocation[i]);
+        int temp = cordinateToTile(x, y, tileLocation[i]);
         if (temp >= 0 && std::binary_search(hitboxes.begin(), hitboxes.end(), temp))
         {
             return false;
@@ -46,16 +35,25 @@ bool Game::checkHitbox(int x, int y, int tileSize, std::vector<std::string> tile
     }
     return true;
 }
-int Game::printTiles(std::vector<std::vector<std::vector<int>>> csv, SDL_Surface *screen, int tileSize, SDL_Surface *tiles, SDL_Rect position)
+int Game::printTiles(std::vector<std::vector<std::vector<int>>> csv, SDL_Surface *screen, SDL_Surface *tiles, SDL_Rect position, int tileScale)
 {
     if (position.x < 0 || position.y < 0)
     {
         std::cout << "Error!! Camera position is out of bounds." << std::endl;
         return 0;
     }
+    Init *get = new Init("n", 0);
+
+    int cutTilesX = std::floor(position.x / tileSize);
+    int cutTilesY = std::floor(position.y / tileSize);
+    int cutPosX = position.x % tileSize;
+    int cutPosY = position.y % tileSize;
     /* 
     / Remember, start from back to front.
     */
+    int windowWidth = get->getDisplayMode().w;
+    int windowHeight = get->getDisplayMode().h;
+
     for (size_t i = 0; i < csv.size(); ++i)
     {
 
@@ -63,13 +61,17 @@ int Game::printTiles(std::vector<std::vector<std::vector<int>>> csv, SDL_Surface
         {
             SDL_Log("Couldn't load CSV file");
         }
-        int destTileSize = tileSize * 2;
+
+        int destTileSize = tileSize * tileScale;
         int srcTileSize = tileSize;
-        for (size_t row = position.y; row < csv[i].size(); ++row)
+
+        size_t rowPlacement = 0;
+        for (size_t row = Camera::getCamera()->getPos().x / tileSize; row < windowWidth / tileSize + Camera::getCamera()->getPos().x; ++row && ++rowPlacement)
         {
-            for (size_t col = position.x; col < csv[i][row].size(); ++col)
+            size_t colPlacement = 0;
+            for (size_t col = Camera::getCamera()->getPos().y / tileSize; col < windowHeight / tileSize + Camera::getCamera()->getPos().y; ++col && ++colPlacement)
             {
-                SDL_Rect dist{static_cast<int>(destTileSize * col) - position.x * 64, static_cast<int>(destTileSize * row) - position.y * 64, destTileSize, destTileSize};
+                SDL_Rect dist{destTileSize * colPlacement + cutTilesX - Camera::getCamera()->getPos().x, destTileSize * rowPlacement - cutTilesY - Camera::getCamera()->getPos().y, destTileSize, destTileSize};
 
                 if (csv[i][row][col] != -1)
                 {
@@ -82,7 +84,7 @@ int Game::printTiles(std::vector<std::vector<std::vector<int>>> csv, SDL_Surface
     return 1;
 }
 
-Camera *Camera::camera()
+Camera *Camera::getCamera()
 {
     static Camera *instance = nullptr;
     if (instance == nullptr)
@@ -103,5 +105,6 @@ void Camera::move(SDL_Rect loc)
 }
 SDL_Rect Camera::getPos()
 {
+    // std::cout << cameraPosition.x << " " << cameraPosition.y << std::endl;
     return cameraPosition;
 }

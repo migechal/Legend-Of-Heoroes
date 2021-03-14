@@ -6,6 +6,6 @@
         "right": "d"
     },
     "Game": {
-        "CameraMovement": "1"
+        "CameraMovement": "5"
     }
 }
