@@ -1,37 +1,38 @@
 #pragma once
 #include <string>
 #include <vector>
-#include <SDL2/SDL_scancode.h>
+#include <SDL2/SDL.h>
+#include "header/Game.h"
 class Command
 {
 
 public:
     virtual ~Command(){};
-    virtual void execute(int amount) = 0;
+    virtual void execute(Camera &camera, int amount) = 0;
 };
 
 class Up : public Command
 {
 public:
-    void execute(int amount);
+    void execute(Camera &camera, int amount);
 };
 
 class Down : public Command
 {
 public:
-    void execute(int amount);
+    void execute(Camera &camera, int amount);
 };
 
 class Left : public Command
 {
 public:
-    void execute(int amount);
+    void execute(Camera &camera, int amount);
 };
 
 class Right : public Command
 {
 public:
-    void execute(int amount);
+    void execute(Camera &camera, int amount);
 };
 class KeyboardHandler
 {

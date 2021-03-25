@@ -36,20 +36,22 @@ int main(int argc, char **argv)
 
     SDL_Init(SDL_INIT_EVERYTHING);
 
-    Init *init = new Init(argv[0], tileSize); //Create Init class
+    Init *init = nullptr;
+    Game *game = nullptr;
+    Camera *camera = nullptr;
 
-    std::vector<std::string> keyNames{
-        init->getSettingsFromJson("settings/config.json", "Buttons", "up"),
-        init->getSettingsFromJson("settings/config.json", "Buttons", "down"),
-        init->getSettingsFromJson("settings/config.json", "Buttons", "left"),
-        init->getSettingsFromJson("settings/config.json", "Buttons", "right")};
+    init = new Init(argv[0], tileSize); //Create Init class
+    std::vector<std::string>
+        keyNames{
+            init->getSettingsFromJson("settings/config.json", "Buttons", "up"),
+            init->getSettingsFromJson("settings/config.json", "Buttons", "down"),
+            init->getSettingsFromJson("settings/config.json", "Buttons", "left"),
+            init->getSettingsFromJson("settings/config.json", "Buttons", "right")};
     const SDL_Scancode UP = SDL_GetScancodeFromName(keyNames[0].c_str());
     const SDL_Scancode DOWN = SDL_GetScancodeFromName(keyNames[1].c_str());
     const SDL_Scancode LEFT = SDL_GetScancodeFromName(keyNames[2].c_str());
     const SDL_Scancode RIGHT = SDL_GetScancodeFromName(keyNames[3].c_str());
     const int cameraMovementByPixels = std::stoi(init->getSettingsFromJson("settings/config.json", "Game", "CameraMovement"));
-
-    Game *game = new Game(init->getBaseDirectory(), tileSize);
 
     KeyboardHandler keyboard({UP, DOWN, LEFT, RIGHT});
 
@@ -78,6 +80,7 @@ int main(int argc, char **argv)
     SDL_BlitScaled(loading, NULL, screen, &loadingRect);
     SDL_UpdateWindowSurface(window);
     //Loads Needed to be done
+    KeyboardHandler handleKeyboard = KeyboardHandler({UP, DOWN, LEFT, RIGHT});
     SDL_Delay(200);
     background = init->imageLoader("assets/MainMenu/MainMenu.png");
 
@@ -90,6 +93,7 @@ int main(int argc, char **argv)
     screen = SDL_GetWindowSurface(window);
 
     SDL_Event e;
+
     SDL_Color color{181, 50, 22, 1};
     Button playButton(windowWidth / 2 - 200, windowHeight / 3 * 2, 400, 150, color);
 
@@ -126,15 +130,20 @@ int main(int argc, char **argv)
 
     location = INGAME;
     bool gameIsRunning = true;
-    std::vector<std::vector<int>> csvFileMap[3]{
+    std::vector<std::vector<std::vector<int>>> csvFileMap{
+
         init->getCSVvector("assets/Map/Back.csv"),
         init->getCSVvector("assets/Map/Middle.csv"),
-        init->getCSVvector("assets/Map/Front.csv"),
-    };
-    if (gameIsRunning)
+        init->getCSVvector("assets/Map/Front.csv")};
+
+    if (location == INGAME)
     {
-        CHECK_RESULT(game->printTiles({csvFileMap[0], csvFileMap[1], csvFileMap[2]}, screen, tiles, Camera::getCamera()->getPos(), tileScale));
+        game = new Game(init->getBaseDirectory(), tileSize);
+        camera = new Camera(csvFileMap[0], tileSize, init->getDisplayMode());
     }
+
+    bool update = true;
+
     while (gameIsRunning && location == INGAME)
     {
         Uint64 start = SDL_GetPerformanceCounter();
@@ -154,37 +163,21 @@ int main(int argc, char **argv)
                 }
             }
         }
-        bool update = false;
-        if (Keyboard::getInstance().isPressed(UP))
+
+        Command *command = handleKeyboard.handleInput();
+
+        if (command != nullptr)
         {
-            Camera::getCamera()->move({0, -cameraMovementByPixels});
-            update = true;
-        }
-        if (Keyboard::getInstance().isPressed(DOWN))
-        {
-            Camera::getCamera()->move({0, cameraMovementByPixels});
-            update = true;
-        }
-        if (Keyboard::getInstance().isPressed(LEFT))
-        {
-            Camera::getCamera()->move({-cameraMovementByPixels, 0});
-            update = true;
-        }
-        if (Keyboard::getInstance().isPressed(RIGHT))
-        {
-            Camera::getCamera()->move({cameraMovementByPixels, 0});
-            update = true;
-        }
-        if (update)
-        {
-            CHECK_RESULT(game->printTiles({csvFileMap[0], csvFileMap[1], csvFileMap[2]}, screen, tiles, Camera::getCamera()->getPos(), tileScale));
+            std::cout << "In" << std::endl;
+            command->execute(*camera, cameraMovementByPixels);
         }
 
+        CHECK_RESULT(game->printTiles(csvFileMap, screen, tiles, camera->getPos(), tileScale));
+        update = false;
         SDL_UpdateWindowSurface(window);
         Uint64 end = SDL_GetPerformanceCounter();
 
         float elapsed = (end - start) / (float)SDL_GetPerformanceFrequency();
-        std::cout << "Current FPS: " << std::to_string(1.0f / elapsed) << std::endl;
     }
     SDL_FreeSurface(screen);
     SDL_FreeSurface(background);

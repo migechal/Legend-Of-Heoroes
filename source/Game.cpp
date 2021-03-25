@@ -2,12 +2,11 @@
 #include <SDL2/SDL.h>
 #include "header/Game.h"
 #include "header/Init.h"
-SDL_Rect Camera::cameraPosition = {0, 0, 0, 0};
 
 Game::Game(std::string baseDirectoryLocation, int tileSize) : tileSize(tileSize), baseDir(baseDirectoryLocation) {}
 int Game::roundDown(int &num, int toSize)
 {
-    for (; num % 32 != 0; --num)
+    for (; num % tileSize != 0; --num)
     {
         // DO NOTHING
     }
@@ -35,6 +34,10 @@ bool Game::checkHitbox(int x, int y, std::vector<std::string> tileLocation)
     }
     return true;
 }
+int Game::pixelToTile(int pixel)
+{
+    return (pixel >= 0) ? pixel / tileSize : 0;
+}
 int Game::printTiles(std::vector<std::vector<std::vector<int>>> csv, SDL_Surface *screen, SDL_Surface *tiles, SDL_Rect position, int tileScale)
 {
     if (position.x < 0 || position.y < 0)
@@ -54,28 +57,28 @@ int Game::printTiles(std::vector<std::vector<std::vector<int>>> csv, SDL_Surface
     int windowWidth = get->getDisplayMode().w;
     int windowHeight = get->getDisplayMode().h;
 
+    if (csv.empty())
+    {
+        SDL_Log("Couldn't load CSV file");
+    }
+
+    int destTileSize = tileSize * tileScale;
+    int srcTileSize = tileSize;
     for (size_t i = 0; i < csv.size(); ++i)
     {
-
-        if (csv.empty())
+        for (size_t row = pixelToTile(position.y - tileSize), rowPlacement = 0;
+             row < csv[i].size() - pixelToTile(windowHeight + tileSize);
+             ++row &&
+             ++rowPlacement)
         {
-            SDL_Log("Couldn't load CSV file");
-        }
-
-        int destTileSize = tileSize * tileScale;
-        int srcTileSize = tileSize;
-
-        size_t rowPlacement = 0;
-        for (size_t row = Camera::getCamera()->getPos().x / tileSize; row < windowWidth / tileSize + Camera::getCamera()->getPos().x; ++row && ++rowPlacement)
-        {
-            size_t colPlacement = 0;
-            for (size_t col = Camera::getCamera()->getPos().y / tileSize; col < windowHeight / tileSize + Camera::getCamera()->getPos().y; ++col && ++colPlacement)
+            for (size_t col = pixelToTile(position.x - tileSize), colPlacement = 0;
+                 col < csv[i][row].size() - pixelToTile(windowWidth + tileSize); ++col, ++colPlacement)
             {
-                SDL_Rect dist{destTileSize * colPlacement + cutTilesX - Camera::getCamera()->getPos().x, destTileSize * rowPlacement - cutTilesY - Camera::getCamera()->getPos().y, destTileSize, destTileSize};
+                SDL_Rect dist{destTileSize * colPlacement + cutTilesX - position.x, destTileSize * rowPlacement - cutTilesY - position.y, destTileSize, destTileSize};
 
                 if (csv[i][row][col] != -1)
                 {
-                    SDL_Rect src{(csv[i][row][col] % 32) * srcTileSize, (csv[i][row][col] / 32) * srcTileSize, srcTileSize, srcTileSize};
+                    SDL_Rect src{(csv[i][row][col] % tileSize) * srcTileSize, (csv[i][row][col] / tileSize) * srcTileSize, srcTileSize, srcTileSize};
                     SDL_BlitScaled(tiles, &src, screen, &dist);
                 }
             }
@@ -84,19 +87,15 @@ int Game::printTiles(std::vector<std::vector<std::vector<int>>> csv, SDL_Surface
     return 1;
 }
 
-Camera *Camera::getCamera()
+Camera::Camera(std::vector<std::vector<int>> currentLevel, int tileSize, SDL_DisplayMode Display) : currentLevel(currentLevel), tileSize(tileSize), Display(Display)
 {
-    static Camera *instance = nullptr;
-    if (instance == nullptr)
-    {
-        instance = new Camera;
-    }
-    return instance;
+    levelSize.w = currentLevel.size();
+    levelSize.h = currentLevel[0].size();
 }
 
 void Camera::move(SDL_Rect loc)
 {
-    if (cameraPosition.x + loc.x < 0 || cameraPosition.y + loc.y < 0)
+    if (cameraPosition.x + loc.x < 0 || cameraPosition.y + loc.y < 0 || cameraPosition.x + loc.x > (currentLevel.size() * tileSize) - Display.w || cameraPosition.y + loc.y > (currentLevel[0].size() * tileSize) - Display.h)
     {
         return;
     }
@@ -105,6 +104,6 @@ void Camera::move(SDL_Rect loc)
 }
 SDL_Rect Camera::getPos()
 {
-    // std::cout << cameraPosition.x << " " << cameraPosition.y << std::endl;
+    std::cout << cameraPosition.x << " " << cameraPosition.y << std::endl;
     return cameraPosition;
 }
