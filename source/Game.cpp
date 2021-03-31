@@ -74,8 +74,7 @@ int Game::printTiles(std::vector<std::vector<std::vector<int>>> csv, SDL_Surface
             for (size_t col = pixelToTile(position.x - tileSize), colPlacement = 0;
                  col < csv[i][row].size() - pixelToTile(windowWidth + tileSize); ++col, ++colPlacement)
             {
-                SDL_Rect dist{destTileSize * colPlacement + cutTilesX - position.x, destTileSize * rowPlacement - cutTilesY - position.y, destTileSize, destTileSize};
-
+                SDL_Rect dist{destTileSize * colPlacement + cutTilesX % tileSize - position.x, destTileSize * rowPlacement - cutTilesY - position.y, destTileSize, destTileSize};
                 if (csv[i][row][col] != -1)
                 {
                     SDL_Rect src{(csv[i][row][col] % tileSize) * srcTileSize, (csv[i][row][col] / tileSize) * srcTileSize, srcTileSize, srcTileSize};

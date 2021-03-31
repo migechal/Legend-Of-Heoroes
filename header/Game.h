@@ -13,6 +13,7 @@ class Game
   int roundDown(int &num, int toSize);
   int cordinateToTile(int x, int y, std::string tileLocation);
   int pixelToTile(int pixel);
+  int placeHolder;
 
 public:
   Game(std::string baseDirectoryLocation, int tileSize);
