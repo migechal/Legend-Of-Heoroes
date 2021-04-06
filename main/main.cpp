@@ -178,6 +178,7 @@ int main(int argc, char **argv)
         Uint64 end = SDL_GetPerformanceCounter();
 
         float elapsed = (end - start) / (float)SDL_GetPerformanceFrequency();
+        std::cout << "Current FPS: " << std::to_string(1.0f / elapsed) << std::endl;
     }
     SDL_FreeSurface(screen);
     SDL_FreeSurface(background);

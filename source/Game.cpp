@@ -47,10 +47,8 @@ int Game::printTiles(std::vector<std::vector<std::vector<int>>> csv, SDL_Surface
     }
     Init *get = new Init("n", 0);
 
-    int cutTilesX = std::floor(position.x / tileSize);
-    int cutTilesY = std::floor(position.y / tileSize);
-    int cutPosX = position.x % tileSize;
-    int cutPosY = position.y % tileSize;
+    int cutTilesX = position.x % tileSize - position.x;
+    int cutTilesY = position.y % tileSize - position.y;
     /* 
     / Remember, start from back to front.
     */
@@ -74,7 +72,7 @@ int Game::printTiles(std::vector<std::vector<std::vector<int>>> csv, SDL_Surface
             for (size_t col = pixelToTile(position.x - tileSize), colPlacement = 0;
                  col < csv[i][row].size() - pixelToTile(windowWidth + tileSize); ++col, ++colPlacement)
             {
-                SDL_Rect dist{destTileSize * colPlacement + cutTilesX % tileSize - position.x, destTileSize * rowPlacement - cutTilesY - position.y, destTileSize, destTileSize};
+                SDL_Rect dist{static_cast<int>(destTileSize * col) - position.x * tileSize / 2, static_cast<int>(destTileSize * row) - position.y * tileSize / 2, destTileSize, destTileSize};
                 if (csv[i][row][col] != -1)
                 {
                     SDL_Rect src{(csv[i][row][col] % tileSize) * srcTileSize, (csv[i][row][col] / tileSize) * srcTileSize, srcTileSize, srcTileSize};
@@ -86,6 +84,10 @@ int Game::printTiles(std::vector<std::vector<std::vector<int>>> csv, SDL_Surface
     return 1;
 }
 
+void printPlayer(SDL_Surface *player, SDL_Surface *screen, SDL_Rect position, int facing)
+{
+}
+
 Camera::Camera(std::vector<std::vector<int>> currentLevel, int tileSize, SDL_DisplayMode Display) : currentLevel(currentLevel), tileSize(tileSize), Display(Display)
 {
     levelSize.w = currentLevel.size();
@@ -94,7 +96,9 @@ Camera::Camera(std::vector<std::vector<int>> currentLevel, int tileSize, SDL_Dis
 
 void Camera::move(SDL_Rect loc)
 {
-    if (cameraPosition.x + loc.x < 0 || cameraPosition.y + loc.y < 0 || cameraPosition.x + loc.x > (currentLevel.size() * tileSize) - Display.w || cameraPosition.y + loc.y > (currentLevel[0].size() * tileSize) - Display.h)
+    if (cameraPosition.x + loc.x < 0 || cameraPosition.y + loc.y < 0 ||
+        cameraPosition.x + loc.x > (currentLevel.size() * tileSize) - Display.w ||
+        cameraPosition.y + loc.y > (currentLevel[0].size() * tileSize) - Display.h)
     {
         return;
     }
