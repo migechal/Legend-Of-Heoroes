@@ -34,12 +34,45 @@ class Right : public Command
 public:
     void execute(Camera &camera, int amount);
 };
+
+class UpRight : public Command
+{
+public:
+    void execute(Camera &camera, int amount);
+};
+
+class DownRight : public Command
+{
+public:
+    void execute(Camera &camera, int amount);
+};
+
+class UpLeft : public Command
+{
+public:
+    void execute(Camera &camera, int amount);
+};
+
+class DownLeft : public Command
+{
+public:
+    void execute(Camera &camera, int amount);
+};
+
 class KeyboardHandler
 {
     Command *buttonUp;
     Command *buttonDown;
+
     Command *buttonLeft;
     Command *buttonRight;
+    
+    Command *buttonUpLeft;
+    Command *buttonUpRight;
+    
+    Command *buttonDownLeft;
+    Command *buttonDownRight;
+    
     std::vector<SDL_Scancode> keys;
 
 public:

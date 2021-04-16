@@ -1,5 +1,6 @@
 #include <string>
 #include <SDL2/SDL.h>
+#include <vector>
 #include "header/Input.h"
 Keyboard &Keyboard::getInstance()
 {
@@ -12,8 +13,14 @@ void Keyboard::getInput()
     state = SDL_GetKeyboardState(NULL);
 }
 
-bool Keyboard::isPressed(SDL_Scancode button)
+
+bool Keyboard::isPressed(std::vector<SDL_Scancode> buttons)
 {
     getInput();
-    return state[button];
+    for(SDL_Scancode i : buttons){
+        if(!state[i]){
+            return false;
+        }
+    }
+    return true;
 }

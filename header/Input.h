@@ -1,5 +1,6 @@
 #include <map>
 #include <string>
+#include <vector>
 #include <SDL2/SDL_keyboard.h>
 class Keyboard
 {
@@ -10,5 +11,5 @@ class Keyboard
 
 public:
 	static Keyboard &getInstance();
-	bool isPressed(SDL_Scancode button);
+	bool isPressed(std::vector<SDL_Scancode> buttons);
 };

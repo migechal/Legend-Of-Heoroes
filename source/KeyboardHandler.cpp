@@ -20,6 +20,34 @@ void Down::execute(Camera &camera, int amount)
     printf("down called");
 }
 
+void UpRight::execute(Camera &camera, int amount)
+{
+    printf("move = %d\n", amount);
+    camera.move({amount, -amount});
+    printf("up called");
+}
+
+void DownRight::execute(Camera &camera, int amount)
+{
+    printf("amount = %d\n", amount);
+    camera.move({amount, amount});
+    printf("down called");
+}
+
+void UpLeft::execute(Camera &camera, int amount)
+{
+    printf("move = %d\n", amount);
+    camera.move({-amount, -amount});
+    printf("up called");
+}
+
+void DownLeft::execute(Camera &camera, int amount)
+{
+    printf("amount = %d\n", amount);
+    camera.move({-amount, amount});
+    printf("down called");
+}
+
 void Left::execute(Camera &camera, int amount)
 {
     printf("amount = %d\n", amount);
@@ -40,8 +68,15 @@ KeyboardHandler::KeyboardHandler(std::vector<SDL_Scancode> keys) : keys(keys)
 
     buttonUp = new Up();
     buttonDown = new Down();
+
     buttonLeft = new Left();
     buttonRight = new Right();
+
+    buttonUpLeft = new UpLeft();
+    buttonUpRight = new UpRight();
+
+    buttonDownLeft = new DownLeft();
+    buttonDownRight = new DownRight();
 }
 
 /**
@@ -49,13 +84,23 @@ KeyboardHandler::KeyboardHandler(std::vector<SDL_Scancode> keys) : keys(keys)
  */
 Command *KeyboardHandler::handleInput()
 {
-    if (Keyboard::getInstance().isPressed(keys[0]))
+    if (Keyboard::getInstance().isPressed({keys[0], keys[2]}))
+        return buttonUpLeft;
+    if (Keyboard::getInstance().isPressed({keys[0], keys[3]}))
+        return buttonUpRight;
+    if (Keyboard::getInstance().isPressed({keys[1], keys[2]}))
+        return buttonDownLeft;
+    if (Keyboard::getInstance().isPressed({keys[1], keys[3]}))
+        return buttonDownRight;
+    
+    if (Keyboard::getInstance().isPressed({keys[0]}))
         return buttonUp;
-    if (Keyboard::getInstance().isPressed(keys[1]))
+    if (Keyboard::getInstance().isPressed({keys[1]}))
         return buttonDown;
-    if (Keyboard::getInstance().isPressed(keys[2]))
+    if (Keyboard::getInstance().isPressed({keys[2]}))
         return buttonLeft;
-    if (Keyboard::getInstance().isPressed(keys[3]))
+    if (Keyboard::getInstance().isPressed({keys[3]}))
         return buttonRight;
+    
     return nullptr;
 };

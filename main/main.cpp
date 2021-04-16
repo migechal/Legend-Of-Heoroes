@@ -3,7 +3,7 @@
 #include <map>
 #include <string_view>
 #include "header/Init.h"
-#include "header/Player.h"
+#include "header/Entity.h"
 #include "header/Menu.h"
 #include "header/Game.h"
 #include "header/KeyboardHandler.h"
