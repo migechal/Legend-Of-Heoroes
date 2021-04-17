@@ -1,69 +1,65 @@
 #pragma once
-#include <string>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_surface.h>
+#include <string>
 #include <vector>
 
-class Entity
-{
+class Entity {
 protected:
-    SDL_Rect Position;
+  SDL_Rect Position;
 
-    std::vector<int> Inventory;
-    SDL_Surface *Surface;
-    bool Hidden;
-    int health;
-    int defaultHealth;
-    int defaultDamage;
-    int Rarity;
-    std::string name;
+  std::vector<int> Inventory;
+  SDL_Surface *    Surface;
+  bool             Hidden;
+  int              health;
+  int              defaultHealth;
+  int              defaultDamage;
+  int              damage;
+  int              Rarity;
+  std::string      name;
 
 public:
-    Entity(int defaultHealth, int defaultDamage, int Rarity, bool Hidden = false);
-    int getHealth();
-    int getDamage();
-    int getRarity();
-    int getItem(int index);
-    bool getIsHidden();
-    std::string getName();
+  Entity(int defaultHealth, int defaultDamage, int Rarity, bool Hidden = false);
+  int         getHealth( );
+  int         getDamage( );
+  int         getRarity( );
+  int         getItem(int index);
+  bool        getIsHidden( );
+  std::string getName( );
 
-    void giveItem(int itemID);
-    void decreaseHealth(int decrease);
-    void setDamage(int newDamage);
-    void setPosition(int newPosition);
-    void printEntity(SDL_Surface *screen);
-    int *getEntityTile(int x, int y);
+  void giveItem(int itemID);
+  void decreaseHealth(int decrease);
+  void setDamage(int newDamage);
+  void setPosition(SDL_Rect newPosition);
+  void printEntity(SDL_Surface *screen);
+  int *getEntityTile(int x, int y);
 };
-class Ememy : public Entity
-{
-    std::string currentTarget;
+class Ememy : public Entity {
+  std::string currentTarget;
 
 public:
-    std::string getCurrentTarget();
+  std::string getCurrentTarget( );
 
-    void setCurrentTarget(std::string EntityName);
-};
-
-class Neutral : public Entity
-{
-    bool Attacked;
-
-public:
-    bool isAttacked();
+  void setCurrentTarget(std::string EntityName);
 };
 
-class Good : public Entity
-{
-    bool Sell;
-    int Age;
+class Neutral : public Entity {
+  bool Attacked;
 
 public:
-    bool doesSell();
-    int getAge();
+  bool isAttacked( );
 };
 
-class Player : public Entity
-{
+class Good : public Entity {
+  bool Sell;
+  int  Age;
+
 public:
-    Player(std::string Name);
+  bool doesSell( );
+  int  getAge( );
+};
+
+class Player : public Entity {
+public:
+  Player(std::string Name);
 };
