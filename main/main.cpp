@@ -99,6 +99,8 @@ int main(int argc, char **argv) {
   bool       menuIsRunning = false;
   static int location      = MAINMENU;
 
+  Player player("name");
+
   while (menuIsRunning) {
     while (SDL_PollEvent(&e)) {
       if (playButton.isClick( )) {
@@ -142,7 +144,7 @@ int main(int argc, char **argv) {
       switch (e.type) {
       case SDL_QUIT: gameIsRunning = false; break;
       case SDL_KEYDOWN:
-        if (e.key.keysym.sym == SDLK_ESCAPE) {
+        if (e.key.keysym.sym == SDLK_ESCAPE, SDLK_q) {
           gameIsRunning = false;
           break;
         }

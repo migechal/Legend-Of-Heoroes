@@ -16,6 +16,7 @@ protected:
   int              defaultDamage;
   int              damage;
   int              Rarity;
+  int              AnimationCounter;
   std::string      name;
 
 public:
@@ -31,7 +32,7 @@ public:
   void decreaseHealth(int decrease);
   void setDamage(int newDamage);
   void setPosition(SDL_Rect newPosition);
-  void printEntity(SDL_Surface *screen);
+  void printEntity(SDL_Surface *screen, int directionFacing);
   int *getEntityTile(int x, int y);
 };
 class Ememy : public Entity {
@@ -61,5 +62,6 @@ public:
 
 class Player : public Entity {
 public:
+  enum DirectionFacing { DOWN = 0, LEFT = 1, UP = 2, RIGHT = 3 };
   Player(std::string Name);
 };
