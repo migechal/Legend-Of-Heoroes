@@ -1,8 +1,7 @@
 #include "header/Entity.h"
 #include <bits/stdc++.h>
 
-Entity::Entity(int defaultHealth, int defaultDamage, int Rarity,
-               bool Hidden = false) {}
+Entity::Entity(int defaultHealth, int defaultDamage, int Rarity, bool Hidden) {}
 int         Entity::getHealth( ) { return health; }
 int         Entity::getDamage( ) { return damage; }
 int         Entity::getRarity( ) { return Rarity; }

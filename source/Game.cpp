@@ -31,6 +31,7 @@ bool Game::checkHitbox(int x, int y, std::vector<std::string> tileLocation) {
   return true;
 }
 int Game::pixelToTile(int pixel) { return (pixel >= 0) ? pixel / tileSize : 0; }
+
 int Game::printTiles(std::vector<std::vector<std::vector<int>>> csv,
                      SDL_Surface *screen, SDL_Surface *tiles, SDL_Rect position,
                      int tileScale) {
