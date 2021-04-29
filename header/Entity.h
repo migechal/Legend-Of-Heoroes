@@ -3,27 +3,33 @@
 #include <SDL2/SDL_surface.h>
 #include <string>
 #include <vector>
-
+struct Rarity {
+  Rarity(std::string name, int rarity);
+  std::string name;
+  int         rarity;
+};
 class Entity {
 protected:
   SDL_Rect Position;
 
   std::vector<int> Inventory;
   SDL_Surface *    Surface;
+  Rarity           rarity;
   bool             Hidden;
   int              health;
   int              defaultHealth;
   int              defaultDamage;
   int              damage;
-  int              Rarity;
   int              AnimationCounter;
   std::string      name;
 
 public:
-  Entity(int defaultHealth, int defaultDamage, int Rarity, bool Hidden = false);
+  enum DirectionFacing { DOWN = 0, LEFT = 1, UP = 2, RIGHT = 3 };
+  Entity(int defaultHealth, int defaultDamage, Rarity rarity,
+         SDL_Surface *Surface, SDL_Rect Position, bool Hidden = false);
   int         getHealth( );
   int         getDamage( );
-  int         getRarity( );
+  Rarity      getRarity( );
   int         getItem(int index);
   bool        getIsHidden( );
   std::string getName( );
@@ -32,7 +38,6 @@ public:
   void decreaseHealth(int decrease);
   void setDamage(int newDamage);
   void setPosition(SDL_Rect newPosition);
-  void printEntity(SDL_Surface *screen, int directionFacing);
   int *getEntityTile(int x, int y);
 };
 class Ememy : public Entity {
@@ -62,6 +67,6 @@ public:
 
 class Player : public Entity {
 public:
-  enum DirectionFacing { DOWN = 0, LEFT = 1, UP = 2, RIGHT = 3 };
-  Player(std::string Name);
+  Player(std::string Name, int defaultHealth, int defaultDamage, Rarity rarity,
+         SDL_Surface *Surface, SDL_Rect Position, bool Hidden = false);
 };

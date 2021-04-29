@@ -19,7 +19,7 @@ public:
   Game(std::string baseDirectoryLocation, int tileSize);
   enum Positions { UP = 0, DOWN = 1, RIGHT = 2, LEFT = 3 };
   bool checkHitbox(int x, int y, std::vector<std::string> tileLocation);
-  void printPlayer(SDL_Surface *player, Entity *entity, int facing);
+  void printEntity(Entity *entity, SDL_Surface *screen, int facing);
   int  printTiles(std::vector<std::vector<std::vector<int>>> csv,
                   SDL_Surface *screen, SDL_Surface *tiles, SDL_Rect position,
                   int tileScale);

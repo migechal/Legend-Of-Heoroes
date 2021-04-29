@@ -58,11 +58,12 @@ int main(int argc, char **argv) {
   backgroundRect.h = windowHeight;
   backgroundRect.w = windowWidth;
 
-  SDL_Surface *loading    = nullptr;
-  SDL_Surface *tiles      = nullptr;
-  SDL_Surface *background = nullptr;
-  SDL_Surface *screen     = nullptr;
-  SDL_Window * window     = nullptr;
+  SDL_Surface *loading       = nullptr;
+  SDL_Surface *tiles         = nullptr;
+  SDL_Surface *background    = nullptr;
+  SDL_Surface *screen        = nullptr;
+  SDL_Surface *playerSurface = nullptr;
+  SDL_Window * window        = nullptr;
   SDL_SetSurfaceBlendMode(background, SDL_BLENDMODE_NONE);
 
   tiles   = init->imageLoader("assets/tiles.png");
@@ -78,8 +79,12 @@ int main(int argc, char **argv) {
   // Loads Needed to be done
   KeyboardHandler handleKeyboard = KeyboardHandler({UP, DOWN, LEFT, RIGHT});
   SDL_Delay(200);
-  background = init->imageLoader("assets/MainMenu/MainMenu.png");
-
+  background    = init->imageLoader("assets/MainMenu/MainMenu.png");
+  playerSurface = init->imageLoader("assets/Entity/Player/betty.png");
+  Rarity GARBAGE("Garbage", 0);
+  Rarity UNCOMMON("Uncommon", 1);
+  Rarity COMMON("Common", 2);
+  Rarity RARE("Rare", 3);
   // Destroy Loading Window objects
   SDL_DestroyWindow(window);
   SDL_FreeSurface(loading);
@@ -98,8 +103,6 @@ int main(int argc, char **argv) {
 
   bool       menuIsRunning = false;
   static int location      = MAINMENU;
-
-  Player player("name");
 
   while (menuIsRunning) {
     while (SDL_PollEvent(&e)) {
@@ -135,8 +138,12 @@ int main(int argc, char **argv) {
     camera = new Camera(csvFileMap[0], tileSize, init->getDisplayMode( ));
   }
 
-  bool update = true;
+  bool update    = true;
+  int  direction = 0;
 
+  std::string playerName = "player";
+  Player *    player =
+      new Player(playerName, 100, 10, GARBAGE, playerSurface, {0, 0});
   while (gameIsRunning && location == INGAME) {
     Uint64 start = SDL_GetPerformanceCounter( );
 
@@ -144,14 +151,16 @@ int main(int argc, char **argv) {
       switch (e.type) {
       case SDL_QUIT: gameIsRunning = false; break;
       case SDL_KEYDOWN:
-        if (e.key.keysym.sym == SDLK_ESCAPE, SDLK_q) {
+        if (e.key.keysym.sym == SDLK_ESCAPE) {
           gameIsRunning = false;
           break;
         }
       }
     }
 
-    Command *command = handleKeyboard.handleInput( );
+    auto         _input        = handleKeyboard.handleInput( );
+    Command *    command       = std::get<0>(_input);
+    SDL_Scancode buttonPressed = std::get<1>(_input);
 
     if (command != nullptr) {
       std::cout << "In" << std::endl;
@@ -160,7 +169,21 @@ int main(int argc, char **argv) {
 
     CHECK_RESULT(game->printTiles(csvFileMap, screen, tiles, camera->getPos( ),
                                   tileScale));
-    update = false;
+
+    int temp = direction;
+
+    if (buttonPressed == UP) {
+      direction = 2;
+    } else if (buttonPressed == DOWN) {
+      direction = 0;
+    } else if (buttonPressed == RIGHT) {
+      direction = 3;
+    } else if (buttonPressed == LEFT) {
+      direction = 1;
+    }
+
+    game->printEntity(player, screen, direction);
+
     SDL_UpdateWindowSurface(window);
     Uint64 end = SDL_GetPerformanceCounter( );
 

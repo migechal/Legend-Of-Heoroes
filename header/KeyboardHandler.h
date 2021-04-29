@@ -2,6 +2,7 @@
 #include "header/Game.h"
 #include <SDL2/SDL.h>
 #include <string>
+#include <tuple>
 #include <vector>
 class Command {
 
@@ -67,5 +68,5 @@ class KeyboardHandler {
 
 public:
   KeyboardHandler(std::vector<SDL_Scancode> keys);
-  Command *handleInput( );
+  std::pair<Command *, SDL_Scancode> handleInput( );
 };

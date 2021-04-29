@@ -76,8 +76,7 @@ int Game::printTiles(std::vector<std::vector<std::vector<int>>> csv,
   return 1;
 }
 
-void printPlayer(SDL_Surface *player, SDL_Surface *screen, SDL_Rect position,
-                 int facing) {}
+void Game::printEntity(Entity *entity, SDL_Surface *screen, int facing) {}
 
 Camera::Camera(std::vector<std::vector<int>> currentLevel, int tileSize,
                SDL_DisplayMode Display)
