@@ -47,7 +47,7 @@ int Button::update( ) {
   color.a -= interval;
 }
 
-void Button::print(SDL_Surface* screen) {
+void Button::print(SDL_Renderer* renderer) {
   this->update( );
   std::cout << (Uint32)color.r << " " << (Uint32)color.g << " "
             << (Uint32)color.b << " " << (Uint32)color.a << std::endl;
@@ -58,7 +58,8 @@ void Button::print(SDL_Surface* screen) {
 
   CHECK_RESULT(button);
   SDL_Rect pos{this->x, this->y, this->w, this->h};
-  CHECK_RESULT(!SDL_BlitScaled(button, NULL, screen, &pos));
+  SDL_RenderCopy(renderer, SDL_CreateTextureFromSurface(renderer, button), NULL,
+                 &pos);
   std::cout << "in print" << std::endl;
   SDL_FreeSurface(button);
 }

@@ -10,6 +10,6 @@ class Button {
 
 public:
   Button(int x, int y, int w, int h, SDL_Color color);
-  void print(SDL_Surface* screen);
+  void print(SDL_Renderer* renderer);
   bool isClick( );
 };

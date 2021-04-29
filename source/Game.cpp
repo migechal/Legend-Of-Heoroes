@@ -33,12 +33,13 @@ bool Game::checkHitbox(int x, int y, std::vector<std::string> tileLocation) {
 int Game::pixelToTile(int pixel) { return (pixel >= 0) ? pixel / tileSize : 0; }
 
 int Game::printTiles(std::vector<std::vector<std::vector<int>>> csv,
-                     SDL_Surface *screen, SDL_Surface *tiles, SDL_Rect position,
-                     int tileScale) {
+                     SDL_Renderer *renderer, SDL_Surface *tiles,
+                     SDL_Rect position, int tileScale) {
   if (position.x < 0 || position.y < 0) {
     std::cout << "Error!! Camera position is out of bounds." << std::endl;
     return 0;
   }
+  if (renderer == nullptr) { SDL_Log("render cannot be null"); }
   Init *get = new Init("n", 0);
 
   int cutTilesX = position.x % tileSize - position.x;
@@ -65,10 +66,11 @@ int Game::printTiles(std::vector<std::vector<std::vector<int>>> csv,
             static_cast<int>(destTileSize * row) - position.y * tileSize / 2,
             destTileSize, destTileSize};
         if (csv[i][row][col] != -1) {
-          SDL_Rect src{(csv[i][row][col] % tileSize) * srcTileSize,
+          SDL_Rect     src{(csv[i][row][col] % tileSize) * srcTileSize,
                        (csv[i][row][col] / tileSize) * srcTileSize, srcTileSize,
                        srcTileSize};
-          SDL_BlitScaled(tiles, &src, screen, &dist);
+          SDL_Texture *text = SDL_CreateTextureFromSurface(renderer, tiles);
+          SDL_RenderCopy(renderer, text, &src, &dist);
         }
       }
     }
@@ -76,7 +78,7 @@ int Game::printTiles(std::vector<std::vector<std::vector<int>>> csv,
   return 1;
 }
 
-void Game::printEntity(Entity *entity, SDL_Surface *screen, int facing) {}
+void Game::printEntity(Entity *entity, SDL_Renderer *renderer, int facing) {}
 
 Camera::Camera(std::vector<std::vector<int>> currentLevel, int tileSize,
                SDL_DisplayMode Display)

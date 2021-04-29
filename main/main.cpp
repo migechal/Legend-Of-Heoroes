@@ -58,12 +58,12 @@ int main(int argc, char **argv) {
   backgroundRect.h = windowHeight;
   backgroundRect.w = windowWidth;
 
-  SDL_Surface *loading       = nullptr;
-  SDL_Surface *tiles         = nullptr;
-  SDL_Surface *background    = nullptr;
-  SDL_Surface *screen        = nullptr;
-  SDL_Surface *playerSurface = nullptr;
-  SDL_Window * window        = nullptr;
+  SDL_Surface * loading       = nullptr;
+  SDL_Surface * tiles         = nullptr;
+  SDL_Surface * background    = nullptr;
+  SDL_Surface * playerSurface = nullptr;
+  SDL_Window *  window        = nullptr;
+  SDL_Renderer *renderer      = nullptr;
   SDL_SetSurfaceBlendMode(background, SDL_BLENDMODE_NONE);
 
   tiles   = init->imageLoader("assets/tiles.png");
@@ -72,10 +72,12 @@ int main(int argc, char **argv) {
       "Loading...", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
       windowWidth / scale, windowHeight / scale,
       SDL_WINDOW_BORDERLESS); // Create loading window object
-  screen = SDL_GetWindowSurface(window);
+  renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
   SDL_Rect loadingRect{0, 0, windowWidth / scale, windowHeight / scale};
-  SDL_BlitScaled(loading, NULL, screen, &loadingRect);
-  SDL_UpdateWindowSurface(window);
+  SDL_RenderCopy(renderer, SDL_CreateTextureFromSurface(renderer, loading),
+                 NULL, &loadingRect);
+  SDL_RenderPresent(renderer);
   // Loads Needed to be done
   KeyboardHandler handleKeyboard = KeyboardHandler({UP, DOWN, LEFT, RIGHT});
   SDL_Delay(200);
@@ -90,11 +92,11 @@ int main(int argc, char **argv) {
   SDL_FreeSurface(loading);
 
   // Create Main Window and Screen objects
-  window = SDL_CreateWindow("Legend Of Heros", SDL_WINDOWPOS_CENTERED,
+  window   = SDL_CreateWindow("Legend Of Heros", SDL_WINDOWPOS_CENTERED,
                             SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight,
                             SDL_WINDOW_FULLSCREEN); // Create window object
-  screen = SDL_GetWindowSurface(window);
-
+  renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+  SDL_Log("Created renderer for main window");
   SDL_Event e;
 
   SDL_Color color{181, 50, 22, 1};
@@ -120,9 +122,10 @@ int main(int argc, char **argv) {
         }
       }
     }
-    SDL_BlitScaled(background, NULL, screen, &backgroundRect);
-    playButton.print(screen);
-    SDL_UpdateWindowSurface(window);
+    SDL_RenderCopy(renderer, SDL_CreateTextureFromSurface(renderer, background),
+                   NULL, &backgroundRect);
+    playButton.print(renderer);
+    SDL_RenderPresent(renderer);
   }
 
   location                                                 = INGAME;
@@ -144,9 +147,9 @@ int main(int argc, char **argv) {
   std::string playerName = "player";
   Player *    player =
       new Player(playerName, 100, 10, GARBAGE, playerSurface, {0, 0});
+  std::cout << "sdfasdtgfghjghjfghjk" << std::endl;
   while (gameIsRunning && location == INGAME) {
-    Uint64 start = SDL_GetPerformanceCounter( );
-
+    // Uint64 start = SDL_GetPerformanceCounter( );
     while (SDL_PollEvent(&e)) {
       switch (e.type) {
       case SDL_QUIT: gameIsRunning = false; break;
@@ -167,8 +170,8 @@ int main(int argc, char **argv) {
       command->execute(*camera, cameraMovementByPixels);
     }
 
-    CHECK_RESULT(game->printTiles(csvFileMap, screen, tiles, camera->getPos( ),
-                                  tileScale));
+    CHECK_RESULT(game->printTiles(csvFileMap, renderer, tiles,
+                                  camera->getPos( ), tileScale));
 
     int temp = direction;
 
@@ -181,16 +184,18 @@ int main(int argc, char **argv) {
     } else if (buttonPressed == LEFT) {
       direction = 1;
     }
+    std::cout << "Before entity print" << std::endl;
+    game->printEntity(player, renderer, direction);
+    std::cout << "After entity print" << std::endl;
+    SDL_RenderPresent(renderer);
+    // Uint64 end = SDL_GetPerformanceCounter( );
 
-    game->printEntity(player, screen, direction);
-
-    SDL_UpdateWindowSurface(window);
-    Uint64 end = SDL_GetPerformanceCounter( );
-
-    float elapsed = (end - start) / (float)SDL_GetPerformanceFrequency( );
-    std::cout << "Current FPS: " << std::to_string(1.0f / elapsed) << std::endl;
+    // float elapsed = (end - start) / (float)SDL_GetPerformanceFrequency( );
+    // std::cout << "Current FPS: " << std::to_string(1.0f / elapsed) <<
+    // std::endl;
   }
-  SDL_FreeSurface(screen);
+
+  SDL_DestroyRenderer(renderer);
   SDL_FreeSurface(background);
   SDL_DestroyWindow(window);
   SDL_Quit( );
