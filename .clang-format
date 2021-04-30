@@ -25,6 +25,6 @@ FixNamespaceComments: 'true'
 NamespaceIndentation: All
 PointerAlignment: Middle
 SpaceAfterTemplateKeyword: 'true'
-SpaceInEmptyParentheses: 'true'
+BreakBeforeBraces: 'Linux'
 
 ...

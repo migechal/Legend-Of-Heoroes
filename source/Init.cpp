@@ -14,7 +14,7 @@
     auto res = fnc;                                                            \
     if (!res) {                                                                \
       std::cout << "ERR: " << __FILE__ << "(" << __LINE__ << ") SDL_Error("    \
-                << SDL_GetError( ) << ")  err: " << res << " in " << #fnc      \
+                << SDL_GetError() << ")  err: " << res << " in " << #fnc       \
                 << std::endl                                                   \
                 << "Maybe ;; export LEGEND_OF_HEROES=`pwd` ;; will fix?"       \
                 << std::endl;                                                  \
@@ -22,17 +22,20 @@
     }                                                                          \
   }
 
-Init::Init(std::string dir, int tileSize) : tileSize(tileSize) {
+Init::Init(std::string dir, int tileSize) : tileSize(tileSize)
+{
   baseDirectoryLocation = GetResourcePath(dir);
 
   CHECK_RESULT(!exists("settings/exists"));
 }
-bool Init::exists(std::string file) {
-  std::fstream f((baseDirectoryLocation + file).c_str( ));
-  return f.fail( );
+bool Init::exists(std::string file)
+{
+  std::fstream f((baseDirectoryLocation + file).c_str());
+  return f.fail();
 }
 std::string Init::getSettingsFromJson(std::string path, std::string tree,
-                                      std::string child) {
+                                      std::string child)
+{
   std::cout << baseDirectoryLocation << std::endl;
   std::string pathSettings = baseDirectoryLocation + path;
   std::cout << "Settings from " << pathSettings << std::endl;
@@ -46,11 +49,12 @@ std::string Init::getSettingsFromJson(std::string path, std::string tree,
   //! Get child of file
   temp  = loadPtreeRoot.get_child(tree);
   tsize = temp.get_child(child);
-  value = tsize.get_value<std::string>( );
+  value = tsize.get_value<std::string>();
   return value;
 }
 
-std::string Init::GetResourcePath(std::string applicationPath) {
+std::string Init::GetResourcePath(std::string applicationPath)
+{
   if (!getenv("LEGEND_OF_HEROES")) {
     std::cout << "Failed to get variable" << std::endl;
   }
@@ -58,25 +62,27 @@ std::string Init::GetResourcePath(std::string applicationPath) {
 
   if (envResourcePath != NULL) {
     applicationPath.assign(envResourcePath);
-    if (applicationPath.back( ) != '/') { applicationPath += "/"; }
+    if (applicationPath.back() != '/') { applicationPath += "/"; }
     return applicationPath;
   } else {
-    while (applicationPath.back( ) != '/') { applicationPath.pop_back( ); }
+    while (applicationPath.back() != '/') { applicationPath.pop_back(); }
   }
   return applicationPath + "";
 }
 
-std::string Init::getBaseDirectory( ) { return this->baseDirectoryLocation; }
+std::string Init::getBaseDirectory() { return this->baseDirectoryLocation; }
 
-std::fstream &Init::gotoLine(std::fstream &file, size_t num) {
+std::fstream &Init::gotoLine(std::fstream &file, size_t num)
+{
   file.seekg(std::ios::beg);
   for (size_t i = 0; i < num - 1; ++i) {
-    file.ignore(std::numeric_limits<std::streamsize>::max( ), '\n');
+    file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
   }
   return file;
 }
 
-std::vector<std::vector<int>> Init::getCSVvector(std::string CSVFile) {
+std::vector<std::vector<int>> Init::getCSVvector(std::string CSVFile)
+{
   std::vector<std::vector<int>> content;
   std::string                   line;
   auto                          temp = CSVFile;
@@ -85,7 +91,7 @@ std::vector<std::vector<int>> Init::getCSVvector(std::string CSVFile) {
 
   while (getline(file, line)) {
     std::vector<int> lineContent;
-    for (size_t i = 0; i < line.length( ); ++i) {
+    for (size_t i = 0; i < line.length(); ++i) {
       int  currentNum = 0;
       bool sign       = true;
       for (; isdigit(line[i]) || line[i] == '-'; ++i) {
@@ -104,22 +110,18 @@ std::vector<std::vector<int>> Init::getCSVvector(std::string CSVFile) {
   return content;
 }
 
-SDL_Surface *Init::imageLoader(std::string file) {
+SDL_Surface *Init::imageLoader(std::string file)
+{
+  std::string path(baseDirectoryLocation + file);
+  SDL_Log(path.c_str());
 
-  SDL_Log(file.c_str( ));
-  std::string temp = file;
-  std::cout << baseDirectoryLocation << std::endl;
-  SDL_Log(baseDirectoryLocation.c_str( ));
-  file = baseDirectoryLocation;
-  file.append(temp.c_str( ));
-
-  SDL_Surface *bp = IMG_Load(file.c_str( ));
-  SDL_Log(file.c_str( ));
+  SDL_Surface *bp = IMG_Load(path.c_str());
   CHECK_RESULT(bp);
   return bp;
 }
 
-SDL_DisplayMode Init::getDisplayMode( ) {
+SDL_DisplayMode Init::getDisplayMode()
+{
   SDL_DisplayMode DM;
   SDL_GetCurrentDisplayMode(0, &DM);
   return DM;

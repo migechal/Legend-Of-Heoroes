@@ -21,7 +21,7 @@ public:
   bool checkHitbox(int x, int y, std::vector<std::string> tileLocation);
   void printEntity(Entity *entity, SDL_Renderer* renderer, int facing);
   int  printTiles(std::vector<std::vector<std::vector<int>>> csv,
-                  SDL_Renderer* renderer, SDL_Surface *tiles, SDL_Rect position,
+                  SDL_Renderer* renderer, SDL_Texture *tiles, SDL_Rect position,
                   int tileScale);
 };
 
