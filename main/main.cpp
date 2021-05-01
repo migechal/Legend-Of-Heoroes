@@ -4,6 +4,10 @@
 #include "header/Input.h"
 #include "header/KeyboardHandler.h"
 #include "header/Menu.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_sdl.h"
+#include "imgui/imgui_impl_opengl3.h"
+#include "imgui/GL/gl3w.h"
 #include <SDL2/SDL.h>
 #include <bits/stdc++.h>
 #include <map>
@@ -54,7 +58,6 @@ int main(int argc, char **argv)
 
   SDL_Rect backgroundRect{0, 0, windowWidth, windowHeight};
 
-
   SDL_Window *window = SDL_CreateWindow(
       "Loading...", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
       windowWidth / scale, windowHeight / scale,
@@ -64,10 +67,7 @@ int main(int argc, char **argv)
 
   SDL_Renderer *renderer =
       SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-  
-  SDL_Surface *t_tiles   = init->imageLoader("assets/tiles.png");
-  SDL_Texture * tiles = SDL_CreateTextureFromSurface(renderer, t_tiles);
-  SDL_FreeSurface(t_tiles);
+
   SDL_Surface *loading = init->imageLoader("assets/Loading/Loading.jpeg");
 
   SDL_RenderCopy(renderer, SDL_CreateTextureFromSurface(renderer, loading),
@@ -75,6 +75,7 @@ int main(int argc, char **argv)
   SDL_RenderPresent(renderer);
 
   // Loads Needed to be done
+
   KeyboardHandler handleKeyboard = KeyboardHandler({UP, DOWN, LEFT, RIGHT});
 
   SDL_Surface *background = init->imageLoader("assets/MainMenu/MainMenu.png");
@@ -98,6 +99,11 @@ int main(int argc, char **argv)
                             SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight,
                             SDL_WINDOW_FULLSCREEN); // Create window object
   renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+  SDL_Surface *t_tiles = init->imageLoader("assets/tiles.png");
+  SDL_Texture *tiles   = SDL_CreateTextureFromSurface(renderer, t_tiles);
+  SDL_FreeSurface(t_tiles);
+
   SDL_Log("Created renderer for main window");
   SDL_Event e;
 
@@ -158,7 +164,7 @@ int main(int argc, char **argv)
             << " from file " << __FILE__ << std::endl;
 
   while (gameIsRunning && location == INGAME) {
-    Uint64 start = SDL_GetPerformanceCounter( );
+    Uint64 start = SDL_GetPerformanceCounter();
     while (SDL_PollEvent(&e)) {
       switch (e.type) {
       case SDL_QUIT: gameIsRunning = false; break;
@@ -193,18 +199,14 @@ int main(int argc, char **argv)
     } else if (buttonPressed == LEFT) {
       direction = 1;
     }
-    SDL_Log("Before entity print");
     game->printEntity(player, renderer, direction);
-    SDL_Log("After entity print");
     SDL_RenderPresent(renderer);
-    SDL_Log("Post Render");
-    Uint64 end = SDL_GetPerformanceCounter( );
+    Uint64 end = SDL_GetPerformanceCounter();
 
-    float elapsed = (end - start) / (float)SDL_GetPerformanceFrequency( );
-    std::cout << "Current FPS: " << std::to_string(1.0f / elapsed) <<
-    std::endl;
+    float elapsed = (end - start) / (float)SDL_GetPerformanceFrequency();
+
+    // std::cout << "Current FPS: " << std::to_string(1.0f / elapsed) << std::endl;
   }
-
   SDL_DestroyRenderer(renderer);
   SDL_FreeSurface(background);
   SDL_DestroyWindow(window);

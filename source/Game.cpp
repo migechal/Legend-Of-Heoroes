@@ -2,6 +2,16 @@
 #include "header/Init.h"
 #include <SDL2/SDL.h>
 #include <bits/stdc++.h>
+#define CHECK_RESULT(fnc)                                                      \
+  {                                                                            \
+    auto res = fnc;                                                            \
+    if (!res) {                                                                \
+      std::cout << "ERR: " << __FILE__ << "(" << __LINE__ << ") SDL_Error("    \
+                << SDL_GetError() << ")  err: " << res << " in " << #fnc       \
+                << std::endl;                                                  \
+      exit(-2);                                                                \
+    }                                                                          \
+  }
 
 Game::Game(std::string baseDirectoryLocation, int tileSize)
     : tileSize(tileSize), baseDir(baseDirectoryLocation)
@@ -48,6 +58,10 @@ int Game::printTiles(std::vector<std::vector<std::vector<int>>> csv,
   if (renderer == nullptr) { SDL_Log("render cannot be null"); }
   Init *get = new Init("n", 0);
 
+
+  CHECK_RESULT(tiles);
+
+
   /*
    Remember, start from back to front.
   */
@@ -73,7 +87,7 @@ int Game::printTiles(std::vector<std::vector<std::vector<int>>> csv,
           SDL_Rect     src{(csv[i][row][col] % tileSize) * srcTileSize,
                        (csv[i][row][col] / tileSize) * srcTileSize, srcTileSize,
                        srcTileSize};
-
+          // SDL_Log("Rendering map...");
           SDL_RenderCopy(renderer, tiles, &src, &dist);
         }
       }
