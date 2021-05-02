@@ -18,7 +18,6 @@ cc_binary(
     ],
     linkopts = ["-lSDL2 -lGL -ldl -g -lSDL2_mixer -lSDL2_image -lSDL2_ttf"],
     deps = [
-        "//imgui:imgui_lib",
         "//source:Sources",
     ],
 )

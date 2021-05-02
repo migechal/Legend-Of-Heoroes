@@ -8,6 +8,7 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <SDL2/SDL_ttf.h>
 
 #define CHECK_RESULT(fnc)                                                      \
   {                                                                            \
@@ -125,4 +126,15 @@ SDL_DisplayMode Init::getDisplayMode()
   SDL_DisplayMode DM;
   SDL_GetCurrentDisplayMode(0, &DM);
   return DM;
+}
+
+TTF_Font *Init::LoadFont(std::string fontName, size_t size){
+  std::string path(baseDirectoryLocation + "assets/Fonts/" + fontName);
+  SDL_Log(path.c_str());
+
+  TTF_Font* font = TTF_OpenFont(path.c_str(), static_cast<int>(size));
+
+  CHECK_RESULT(font);
+
+  return font;
 }

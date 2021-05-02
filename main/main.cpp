@@ -3,15 +3,14 @@
 #include "header/Init.h"
 #include "header/Input.h"
 #include "header/KeyboardHandler.h"
+#include "header/Gui.h"
 #include "header/Menu.h"
-#include "imgui/imgui.h"
-#include "imgui/imgui_impl_sdl.h"
-#include "imgui/imgui_impl_opengl3.h"
-#include "imgui/GL/gl3w.h"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <bits/stdc++.h>
 #include <map>
 #include <string_view>
+#define GREEN {0, 255, 0}
 
 #define CHECK_RESULT(fnc)                                                      \
   {                                                                            \
@@ -33,6 +32,7 @@ enum Location { MAINMENU = 0, INGAME = 1, OPTIONS = 2 };
 int main(int argc, char **argv)
 {
   SDL_Init(SDL_INIT_EVERYTHING);
+  TTF_Init();
 
   // Create Init class
   Init *init = new Init(argv[0], tileSize);
@@ -75,6 +75,8 @@ int main(int argc, char **argv)
   SDL_RenderPresent(renderer);
 
   // Loads Needed to be done
+  Gui* gui = nullptr;
+  TTF_Font* font = init->LoadFont("DisposableDroidBB.ttf", 12);
 
   KeyboardHandler handleKeyboard = KeyboardHandler({UP, DOWN, LEFT, RIGHT});
 
@@ -99,10 +101,12 @@ int main(int argc, char **argv)
                             SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight,
                             SDL_WINDOW_FULLSCREEN); // Create window object
   renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-
   SDL_Surface *t_tiles = init->imageLoader("assets/tiles.png");
   SDL_Texture *tiles   = SDL_CreateTextureFromSurface(renderer, t_tiles);
   SDL_FreeSurface(t_tiles);
+
+  gui = new Gui(window, renderer, init);
+
 
   SDL_Log("Created renderer for main window");
   SDL_Event e;
@@ -181,7 +185,6 @@ int main(int argc, char **argv)
     SDL_Scancode buttonPressed = std::get<1>(_input);
 
     if (command != nullptr) {
-      std::cout << "In" << std::endl;
       command->execute(*camera, cameraMovementByPixels);
     }
 
@@ -200,12 +203,14 @@ int main(int argc, char **argv)
       direction = 1;
     }
     game->printEntity(player, renderer, direction);
-    SDL_RenderPresent(renderer);
     Uint64 end = SDL_GetPerformanceCounter();
 
     float elapsed = (end - start) / (float)SDL_GetPerformanceFrequency();
 
-    // std::cout << "Current FPS: " << std::to_string(1.0f / elapsed) << std::endl;
+    gui->addText("Current FPS: " + std::to_string(int(1.0f / elapsed)), {windowWidth, 0}, font, GREEN, 10);
+
+    SDL_RenderPresent(renderer);
+
   }
   SDL_DestroyRenderer(renderer);
   SDL_FreeSurface(background);

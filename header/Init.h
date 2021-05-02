@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
-
+#include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL.h>
 
 class Init
@@ -14,9 +14,11 @@ class Init
 
 public:
     Init(std::string dir, int tileSize);
+
     std::string getSettingsFromJson(std::string path, std::string tree, std::string child);
     SDL_Surface *imageLoader(std::string file);
     std::vector<std::vector<int>> getCSVvector(std::string CSVFile);
+    TTF_Font *LoadFont(std::string fontName, size_t size);
     SDL_DisplayMode getDisplayMode();
     std::string getBaseDirectory();
 };

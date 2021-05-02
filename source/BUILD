@@ -14,7 +14,6 @@ cc_library(
     ],
     deps = [
         "//header:HeaderFiles",
-        "//imgui:imgui_lib",
     ],
     visibility = ["//main:__pkg__"],
 )

@@ -8,55 +8,38 @@
 #include <vector>
 
 void Up::execute(Camera &camera, int amount) {
-  printf("move = %d\n", amount);
   camera.move({0, -amount});
-  printf("up called");
 }
 
 void Down::execute(Camera &camera, int amount) {
-  printf("amount = %d\n", amount);
   camera.move({0, amount});
-  printf("down called");
 }
 
 void UpRight::execute(Camera &camera, int amount) {
-  printf("move = %d\n", amount);
   camera.move({amount, -amount});
-  printf("up called");
 }
 
 void DownRight::execute(Camera &camera, int amount) {
-  printf("amount = %d\n", amount);
   camera.move({amount, amount});
-  printf("down called");
 }
 
 void UpLeft::execute(Camera &camera, int amount) {
-  printf("move = %d\n", amount);
   camera.move({-amount, -amount});
-  printf("up called");
 }
 
 void DownLeft::execute(Camera &camera, int amount) {
-  printf("amount = %d\n", amount);
   camera.move({-amount, amount});
-  printf("down called");
 }
 
 void Left::execute(Camera &camera, int amount) {
-  printf("amount = %d\n", amount);
   camera.move({-amount, 0});
-  printf("left called");
 }
 
 void Right::execute(Camera &camera, int amount) {
-  printf("amount = %d\n", amount);
   camera.move({amount, 0});
-  printf("right called");
 }
 
 KeyboardHandler::KeyboardHandler(std::vector<SDL_Scancode> keys) : keys(keys) {
-  printf("keys size = %ld\n", keys.size( ));
 
   buttonUp   = new Up( );
   buttonDown = new Down( );
