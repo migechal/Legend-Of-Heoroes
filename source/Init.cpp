@@ -128,13 +128,9 @@ SDL_DisplayMode Init::getDisplayMode()
   return DM;
 }
 
-TTF_Font *Init::LoadFont(std::string fontName, size_t size){
+std::string Init::getFontLocation(std::string fontName){
   std::string path(baseDirectoryLocation + "assets/Fonts/" + fontName);
   SDL_Log(path.c_str());
 
-  TTF_Font* font = TTF_OpenFont(path.c_str(), static_cast<int>(size));
-
-  CHECK_RESULT(font);
-
-  return font;
+  return path;
 }

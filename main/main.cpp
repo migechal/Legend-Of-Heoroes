@@ -51,6 +51,26 @@ int main(int argc, char** argv)
   // Create Init class
   Init* init = new Init(argv[0], tileSize);
 
+  std::vector<std::string> keyNames{
+    init->getSettingsFromJson("settings/config.json", "Buttons", "up"),
+    init->getSettingsFromJson("settings/config.json", "Buttons", "down"),
+    init->getSettingsFromJson("settings/config.json", "Buttons", "left"),
+    init->getSettingsFromJson("settings/config.json", "Buttons", "right")};
+
+  const SDL_Scancode UP    = SDL_GetScancodeFromName(keyNames[0].c_str());
+  const SDL_Scancode DOWN  = SDL_GetScancodeFromName(keyNames[1].c_str());
+  const SDL_Scancode LEFT  = SDL_GetScancodeFromName(keyNames[2].c_str());
+  const SDL_Scancode RIGHT = SDL_GetScancodeFromName(keyNames[3].c_str());
+
+  const int cameraMovementByPixels = std::stoi(init->getSettingsFromJson(
+      "settings/config.json", "Game", "CameraMovement"));
+
+  KeyboardHandler keyboard({UP, DOWN, LEFT, RIGHT});
+
+  int windowWidth  = init->getDisplayMode().w;
+  int windowHeight = init->getDisplayMode().h;
+
+
   // // Create window with graphics context
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
@@ -59,7 +79,7 @@ int main(int argc, char** argv)
       SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_ALLOW_HIGHDPI);
   SDL_Window* window =
       SDL_CreateWindow("Imeto na egrata", SDL_WINDOWPOS_CENTERED,
-                       SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+                       SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, window_flags);
   SDL_GLContext gl_context = SDL_GL_CreateContext(window);
 
   SDL_GL_MakeCurrent(window, gl_context);
@@ -97,19 +117,41 @@ int main(int argc, char** argv)
   ImGui_ImplOpenGL3_Init(glsl_version);
 
   // Load Fonts
-  io.Fonts->AddFontFromFileTTF("/home/migecha/Projects/Games/Legend-Of-Heores/"
-                               "assets/Fonts/DisposableDroidBB.ttf",
-                               30.0f);
+  std::string defaultFont = init->getFontLocation("DisposableDroidBB.ttf");
+  io.Fonts->AddFontFromFileTTF(defaultFont.c_str(), 30.0f);
 
   // Our state
   ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+
+
 
   auto renderer = SDL_CreateRenderer(
       window, oglIdx, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
   SDL_Texture* text = SDL_CreateTextureFromSurface(
       renderer, init->imageLoader("assets/Loading/Loading.jpeg"));
-  SDL_Rect loadingRect{0, 0, 1024, 768};
 
+
+  std::vector<std::vector<std::vector<int>>> csvFileMap{
+    init->getCSVvector("assets/Map/Back.csv"),
+    init->getCSVvector("assets/Map/Middle.csv"),
+    init->getCSVvector("assets/Map/Front.csv")};
+
+
+  SDL_Surface *t_tiles = init->imageLoader("assets/tiles.png");
+  SDL_Texture *tiles   = SDL_CreateTextureFromSurface(renderer, t_tiles);
+  SDL_FreeSurface(t_tiles);
+
+
+  KeyboardHandler handleKeyboard = KeyboardHandler({UP, DOWN, LEFT, RIGHT});
+
+  Game *  game   = nullptr;
+  Camera *camera = nullptr;
+
+
+  game   = new Game(init->getBaseDirectory(), tileSize);
+  camera = new Camera(csvFileMap[0], tileSize, init->getDisplayMode());
+  int direction = 0;
   // Main loop
   bool done = false;
   while (!done) {
@@ -117,11 +159,20 @@ int main(int argc, char** argv)
     while (SDL_PollEvent(&event)) {
       ImGui_ImplSDL2_ProcessEvent(&event);
       if (event.type == SDL_QUIT) done = true;
+      if(event.type == SDL_KEYDOWN){
+        if(event.key.keysym.sym == SDLK_ESCAPE){
+          done = true;
+          break;
+        }
+      }
       if (event.type == SDL_WINDOWEVENT &&
           event.window.event == SDL_WINDOWEVENT_CLOSE &&
           event.window.windowID == SDL_GetWindowID(window))
         done = true;
     }
+
+
+
 
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
@@ -129,24 +180,47 @@ int main(int argc, char** argv)
     ImGui::NewFrame();
 
     {
-      static float f       = 0.0f;
-      static int   counter = 0;
-
-      ImGui::Begin("Hello, world!"); // Create a window called "Hello, world!"
+      ImGui::Begin("Game Panel"); // Create a window called "Hello, world!"
                                      // and append into it.
 
       ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
                   1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
       ImGui::End();
     }
-
     // Rendering
     ImGui::Render();
     glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
     glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    SDL_RenderCopy(renderer, text, NULL, &loadingRect);
+
+
+    auto         _input        = handleKeyboard.handleInput();
+    Command *    command       = std::get<0>(_input);
+    SDL_Scancode buttonPressed = std::get<1>(_input);
+
+    if (command != nullptr) {
+      command->execute(*camera, cameraMovementByPixels);
+    }
+
+    CHECK_RESULT(game->printTiles(csvFileMap, renderer, tiles, camera->getPos(),
+                                  tileScale));
+
+    int temp = direction;
+
+    if (buttonPressed == UP) {
+      direction = 2;
+    } else if (buttonPressed == DOWN) {
+      direction = 0;
+    } else if (buttonPressed == RIGHT) {
+      direction = 3;
+    } else if (buttonPressed == LEFT) {
+      direction = 1;
+    }
+    // game->printEntity(player, renderer, direction);
+
+    // SDL_RenderPresent(renderer);
+
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     SDL_GL_SwapWindow(window);

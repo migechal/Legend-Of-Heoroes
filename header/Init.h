@@ -18,7 +18,7 @@ public:
     std::string getSettingsFromJson(std::string path, std::string tree, std::string child);
     SDL_Surface *imageLoader(std::string file);
     std::vector<std::vector<int>> getCSVvector(std::string CSVFile);
-    TTF_Font *LoadFont(std::string fontName, size_t size);
+    std::string getFontLocation(std::string fontName);
     SDL_DisplayMode getDisplayMode();
     std::string getBaseDirectory();
 };
