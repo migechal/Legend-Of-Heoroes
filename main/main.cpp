@@ -1,16 +1,23 @@
+#include <bits/stdc++.h>
+
+#include <GL/gl3w.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_opengl3.h"
+#include "imgui/imgui_impl_sdl.h"
+
 #include "header/Entity.h"
 #include "header/Game.h"
 #include "header/Init.h"
 #include "header/Input.h"
 #include "header/KeyboardHandler.h"
-#include "header/Gui.h"
-#include "header/Menu.h"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
-#include <bits/stdc++.h>
-#include <map>
-#include <string_view>
-#define GREEN {0, 255, 0}
+
+#define GREEN                                                                  \
+  {                                                                            \
+    0, 255, 0                                                                  \
+  }
 
 #define CHECK_RESULT(fnc)                                                      \
   {                                                                            \
@@ -29,10 +36,146 @@ const int tileScale = 3;
 
 enum Location { MAINMENU = 0, INGAME = 1, OPTIONS = 2 };
 
+int main(int argc, char** argv)
+{
+  // GL 3.0 + GLSL 130
+  const char* glsl_version = "#version 130";
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
+
+  CHECK_RESULT(
+      !SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER));
+
+  // Create Init class
+  Init* init = new Init(argv[0], tileSize);
+
+  // // Create window with graphics context
+  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+  SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+  SDL_WindowFlags window_flags = (SDL_WindowFlags)(
+      SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_ALLOW_HIGHDPI);
+  SDL_Window* window =
+      SDL_CreateWindow("Imeto na egrata", SDL_WINDOWPOS_CENTERED,
+                       SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+  SDL_GLContext gl_context = SDL_GL_CreateContext(window);
+
+  SDL_GL_MakeCurrent(window, gl_context);
+  SDL_GL_SetSwapInterval(1); // Enable vsync
+
+  int oglIdx = -1;
+  int nRD    = SDL_GetNumRenderDrivers();
+  for (int i = 0; i < nRD; i++) {
+    SDL_RendererInfo info;
+    if (!SDL_GetRenderDriverInfo(i, &info)) {
+      if (!strcmp(info.name, "opengl")) { oglIdx = i; }
+    }
+  }
+
+  // Initialize OpenGL loader
+  CHECK_RESULT(!gl3wInit());
+
+  // Setup Dear ImGui context
+  IMGUI_CHECKVERSION();
+  ImGui::CreateContext();
+  ImGuiIO& io = ImGui::GetIO();
+  (void)io;
+
+  io.ConfigFlags |=
+      ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+  io.ConfigFlags |=
+      ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
+
+  // Setup Dear ImGui style
+  ImGui::StyleColorsDark();
+  // ImGui::StyleColorsClassic();
+
+  // Setup Platform/Renderer bindings
+  ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
+  ImGui_ImplOpenGL3_Init(glsl_version);
+
+  // Load Fonts
+  io.Fonts->AddFontFromFileTTF("/home/migecha/Projects/Games/Legend-Of-Heores/"
+                               "assets/Fonts/DisposableDroidBB.ttf",
+                               30.0f);
+
+  // Our state
+  ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+  auto renderer = SDL_CreateRenderer(
+      window, oglIdx, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+  SDL_Texture* text = SDL_CreateTextureFromSurface(
+      renderer, init->imageLoader("assets/Loading/Loading.jpeg"));
+  SDL_Rect loadingRect{0, 0, 1024, 768};
+
+  // Main loop
+  bool done = false;
+  while (!done) {
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+      ImGui_ImplSDL2_ProcessEvent(&event);
+      if (event.type == SDL_QUIT) done = true;
+      if (event.type == SDL_WINDOWEVENT &&
+          event.window.event == SDL_WINDOWEVENT_CLOSE &&
+          event.window.windowID == SDL_GetWindowID(window))
+        done = true;
+    }
+
+    // Start the Dear ImGui frame
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL2_NewFrame(window);
+    ImGui::NewFrame();
+
+    {
+      static float f       = 0.0f;
+      static int   counter = 0;
+
+      ImGui::Begin("Hello, world!"); // Create a window called "Hello, world!"
+                                     // and append into it.
+
+      ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
+                  1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+      ImGui::End();
+    }
+
+    // Rendering
+    ImGui::Render();
+    glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
+    glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    SDL_RenderCopy(renderer, text, NULL, &loadingRect);
+
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    SDL_GL_SwapWindow(window);
+  }
+
+  // Cleanup
+  ImGui_ImplOpenGL3_Shutdown();
+  ImGui_ImplSDL2_Shutdown();
+  ImGui::DestroyContext();
+
+  SDL_GL_DeleteContext(gl_context);
+  SDL_DestroyWindow(window);
+  SDL_Quit();
+
+  return 0;
+}
+
+/*
 int main(int argc, char **argv)
 {
-  SDL_Init(SDL_INIT_EVERYTHING);
-  TTF_Init();
+  CHECK_RESULT(!SDL_Init(SDL_INIT_EVERYTHING));
+
+  const char* glsl_version = "#version 130";
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+
+  //TTF_Init();
 
   // Create Init class
   Init *init = new Init(argv[0], tileSize);
@@ -58,10 +201,17 @@ int main(int argc, char **argv)
 
   SDL_Rect backgroundRect{0, 0, windowWidth, windowHeight};
 
+  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+  SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+  SDL_WindowFlags window_flags = (SDL_WindowFlags)(
+        SDL_WINDOW_OPENGL |
+        SDL_WINDOW_BORDERLESS |
+        SDL_WINDOW_ALLOW_HIGHDPI);
   SDL_Window *window = SDL_CreateWindow(
       "Loading...", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
       windowWidth / scale, windowHeight / scale,
-      SDL_WINDOW_BORDERLESS); // Create loading window object
+      window_flags);
 
   SDL_Rect loadingRect{0, 0, windowWidth / scale, windowHeight / scale};
 
@@ -96,16 +246,31 @@ int main(int argc, char **argv)
   SDL_DestroyWindow(window);
   SDL_FreeSurface(loading);
 
+
   // Create Main Window and Screen objects
+  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+  SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
   window   = SDL_CreateWindow("Legend Of Heros", SDL_WINDOWPOS_CENTERED,
                             SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight,
-                            SDL_WINDOW_FULLSCREEN); // Create window object
+                            window_flags | SDL_WINDOW_FULLSCREEN);
+
+  SDL_GLContext gl_context = SDL_GL_CreateContext(window);
+  SDL_GL_MakeCurrent(window, gl_context);
+
+  IMGUI_CHECKVERSION();
+  ImGui::CreateContext();
+  ImGuiIO& io = ImGui::GetIO(); (void)io;
+  ImGui::StyleColorsDark();
+  ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
+  ImGui_ImplOpenGL3_Init(glsl_version);
+
   renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
   SDL_Surface *t_tiles = init->imageLoader("assets/tiles.png");
   SDL_Texture *tiles   = SDL_CreateTextureFromSurface(renderer, t_tiles);
   SDL_FreeSurface(t_tiles);
 
-  gui = new Gui(window, renderer, init);
+  //gui = new Gui(window, renderer, init);
 
 
   SDL_Log("Created renderer for main window");
@@ -120,6 +285,8 @@ int main(int argc, char **argv)
 
   while (menuIsRunning) {
     while (SDL_PollEvent(&e)) {
+      ImGui_ImplSDL2_ProcessEvent(&event);
+
       if (playButton.isClick()) {
         location      = INGAME;
         menuIsRunning = false;
@@ -207,7 +374,8 @@ int main(int argc, char **argv)
 
     float elapsed = (end - start) / (float)SDL_GetPerformanceFrequency();
 
-    gui->addText("Current FPS: " + std::to_string(int(1.0f / elapsed)), {windowWidth, 0}, font, GREEN, 10);
+    //gui->addText("Current FPS: " + std::to_string(int(1.0f / elapsed)),
+{windowWidth, 0}, font, GREEN, 10);
 
     SDL_RenderPresent(renderer);
 
@@ -218,3 +386,4 @@ int main(int argc, char **argv)
   SDL_Quit();
   return 0;
 }
+*/

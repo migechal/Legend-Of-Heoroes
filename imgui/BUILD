@@ -6,13 +6,13 @@ cc_library(
         "GL/gl3w.c",
         "GL/gl3w.h",
         "GL/glcorearb.h",
+        "imgui_impl_opengl3.cpp",
+        "imgui_impl_opengl3.h",
         "imconfig.h",
         "imgui.cpp",
         "imgui.h",
         "imgui_demo.cpp",
         "imgui_draw.cpp",
-        "imgui_impl_opengl3.cpp",
-        "imgui_impl_opengl3.h",
         "imgui_impl_sdl.cpp",
         "imgui_impl_sdl.h",
         "imgui_internal.h",
@@ -60,7 +60,6 @@ cc_binary(
     ],
     linkopts = ["-lSDL2 -lGL -ldl -lSDL2_mixer"],
     deps = [
-        ":func_lib",
         ":imgui_lib",
     ],
 )
