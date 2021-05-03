@@ -12,6 +12,7 @@
 #include "header/Game.h"
 #include "header/Init.h"
 #include "header/Input.h"
+#include "header/Timer.h"
 #include "header/KeyboardHandler.h"
 
 #define GREEN                                                                  \
@@ -146,6 +147,7 @@ int main(int argc, char** argv)
   Game*       game       = nullptr;
   Camera*     camera     = nullptr;
   Entity*     player     = nullptr;
+  Timer*      tickTimer      = nullptr;
   std::string playerName = "player";
 
   player = new Player(
@@ -156,11 +158,14 @@ int main(int argc, char** argv)
 
   game   = new Game(init->getBaseDirectory(), tileSize);
   camera = new Camera(csvFileMap[0], tileSize, init->getDisplayMode());
+  tickTimer  = Timer::getInstance();
 
   // Main loop
   bool done = false;
+  tickTimer->reset();
 
   while (!done) {
+    tickTimer->update();
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
       ImGui_ImplSDL2_ProcessEvent(&event);
@@ -220,14 +225,18 @@ int main(int argc, char** argv)
     } else if (buttonPressed == LEFT) {
       player->directionFacing = 1;
     }
-
-    game->printEntity(player, renderer);
+    if(tickTimer->getDeltaTime() >= 10.0f / ImGui::GetIO().Framerate){
+      // printf("sdf");
+      game->printEntity(player, renderer);
+      tickTimer->reset();
+      SDL_GL_SwapWindow(window);
+    }
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    SDL_GL_SwapWindow(window);
   }
 
   // Cleanup
+  tickTimer->release();
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplSDL2_Shutdown();
   ImGui::DestroyContext();
