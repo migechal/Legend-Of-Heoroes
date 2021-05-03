@@ -3,9 +3,10 @@
         "up": "w",
         "down": "s",
         "left": "a",
-        "right": "d"
+        "right": "d",
+        "sprint": "Left Ctrl"
     },
     "Game": {
-        "CameraMovement": "2"
+        "CameraMovement": "1"
     }
 }

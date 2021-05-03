@@ -7,57 +7,55 @@
 #include <string>
 #include <vector>
 
-void Up::execute(Camera &camera, int amount) {
-  camera.move({0, -amount});
-}
+void Up::execute(Camera &camera, int amount) { camera.move({0, -amount}); }
 
-void Down::execute(Camera &camera, int amount) {
-  camera.move({0, amount});
-}
+void Down::execute(Camera &camera, int amount) { camera.move({0, amount}); }
 
-void UpRight::execute(Camera &camera, int amount) {
+void UpRight::execute(Camera &camera, int amount)
+{
   camera.move({amount, -amount});
 }
 
-void DownRight::execute(Camera &camera, int amount) {
+void DownRight::execute(Camera &camera, int amount)
+{
   camera.move({amount, amount});
 }
 
-void UpLeft::execute(Camera &camera, int amount) {
+void UpLeft::execute(Camera &camera, int amount)
+{
   camera.move({-amount, -amount});
 }
 
-void DownLeft::execute(Camera &camera, int amount) {
+void DownLeft::execute(Camera &camera, int amount)
+{
   camera.move({-amount, amount});
 }
 
-void Left::execute(Camera &camera, int amount) {
-  camera.move({-amount, 0});
-}
+void Left::execute(Camera &camera, int amount) { camera.move({-amount, 0}); }
 
-void Right::execute(Camera &camera, int amount) {
-  camera.move({amount, 0});
-}
+void Right::execute(Camera &camera, int amount) { camera.move({amount, 0}); }
 
-KeyboardHandler::KeyboardHandler(std::vector<SDL_Scancode> keys) : keys(keys) {
+KeyboardHandler::KeyboardHandler(std::vector<SDL_Scancode> keys) : keys(keys)
+{
 
-  buttonUp   = new Up( );
-  buttonDown = new Down( );
+  buttonUp   = new Up();
+  buttonDown = new Down();
 
-  buttonLeft  = new Left( );
-  buttonRight = new Right( );
+  buttonLeft  = new Left();
+  buttonRight = new Right();
 
-  buttonUpLeft  = new UpLeft( );
-  buttonUpRight = new UpRight( );
+  buttonUpLeft  = new UpLeft();
+  buttonUpRight = new UpRight();
 
-  buttonDownLeft  = new DownLeft( );
-  buttonDownRight = new DownRight( );
+  buttonDownLeft  = new DownLeft();
+  buttonDownRight = new DownRight();
 }
 
 /**
  * @brief Up, Down, Left, Right
  */
-std::pair<Command *, SDL_Scancode> KeyboardHandler::handleInput( ) {
+std::pair<Command *, SDL_Scancode> KeyboardHandler::handleInput()
+{
   // if (Keyboard::getInstance( ).isPressed({keys[0], keys[2]}))
   //   return buttonUpLeft;
   // if (Keyboard::getInstance( ).isPressed({keys[0], keys[3]}))
@@ -67,15 +65,20 @@ std::pair<Command *, SDL_Scancode> KeyboardHandler::handleInput( ) {
   // if (Keyboard::getInstance( ).isPressed({keys[1], keys[3]}))
   //   return buttonDownRight;
 
-  if (Keyboard::getInstance( ).isPressed({keys[0]}))
+  if (Keyboard::getInstance().isPressed({keys[0]}))
     return std::pair<Command *, SDL_Scancode>(buttonUp, keys[0]);
-  if (Keyboard::getInstance( ).isPressed({keys[1]}))
+  if (Keyboard::getInstance().isPressed({keys[1]}))
     return std::pair<Command *, SDL_Scancode>(buttonDown, keys[1]);
-  if (Keyboard::getInstance( ).isPressed({keys[2]}))
+  if (Keyboard::getInstance().isPressed({keys[2]}))
     return std::pair<Command *, SDL_Scancode>(buttonLeft, keys[2]);
 
-  if (Keyboard::getInstance( ).isPressed({keys[3]}))
+  if (Keyboard::getInstance().isPressed({keys[3]}))
     return std::pair<Command *, SDL_Scancode>(buttonRight, keys[3]);
 
   return std::pair<Command *, SDL_Scancode>(nullptr, SDL_Scancode(0));
 };
+
+bool KeyboardHandler::isSprint()
+{
+  return Keyboard::getInstance().isPressed({keys[4]});
+}

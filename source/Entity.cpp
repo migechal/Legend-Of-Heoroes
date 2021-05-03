@@ -18,10 +18,18 @@ Entity::Entity(int defaultHealth, int defaultDamage, Rarity rarity,
       amountOfChars(amountOfChars),
       hidden(hidden),
       health(defaultHealth),
+      moving(false),
       animationCounter(0)
 {
 }
 
+void Entity::toggleMovement() { moving = !moving; }
+bool Entity::isMoving() { return moving; }
+
+void Entity::setFrame(int frame)
+{
+  animationCounter = frame % getAmountOfChars();
+}
 int          Entity::getHealth() { return health; }
 int          Entity::getDamage() { return damage; }
 Rarity       Entity::getRarity() { return rarity; }

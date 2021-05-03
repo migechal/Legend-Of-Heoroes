@@ -4,54 +4,64 @@
 #include <string>
 #include <tuple>
 #include <vector>
-class Command {
+class Command
+{
 
 public:
-  virtual ~Command( ){ };
+  virtual ~Command(){};
   virtual void execute(Camera &camera, int amount) = 0;
 };
 
-class Up : public Command {
+class Up : public Command
+{
 public:
   void execute(Camera &camera, int amount);
 };
 
-class Down : public Command {
+class Down : public Command
+{
 public:
   void execute(Camera &camera, int amount);
 };
 
-class Left : public Command {
+class Left : public Command
+{
 public:
   void execute(Camera &camera, int amount);
 };
 
-class Right : public Command {
+class Right : public Command
+{
 public:
   void execute(Camera &camera, int amount);
 };
 
-class UpRight : public Command {
+class UpRight : public Command
+{
 public:
   void execute(Camera &camera, int amount);
 };
 
-class DownRight : public Command {
+class DownRight : public Command
+{
 public:
   void execute(Camera &camera, int amount);
 };
 
-class UpLeft : public Command {
+class UpLeft : public Command
+{
 public:
   void execute(Camera &camera, int amount);
 };
 
-class DownLeft : public Command {
+class DownLeft : public Command
+{
 public:
   void execute(Camera &camera, int amount);
 };
 
-class KeyboardHandler {
+class KeyboardHandler
+{
   Command *buttonUp;
   Command *buttonDown;
 
@@ -68,5 +78,6 @@ class KeyboardHandler {
 
 public:
   KeyboardHandler(std::vector<SDL_Scancode> keys);
-  std::pair<Command *, SDL_Scancode> handleInput( );
+  std::pair<Command *, SDL_Scancode> handleInput();
+  bool                               isSprint();
 };

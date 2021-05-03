@@ -94,7 +94,7 @@ int Game::printTiles(std::vector<std::vector<std::vector<int>>> csv,
   return 1;
 }
 
-void Game::printEntity(Entity *entity, SDL_Renderer *renderer)
+void Game::printEntity(Entity *entity, SDL_Renderer *renderer, int scale)
 {
   // entity->animationCounter = 3;s
 
@@ -105,12 +105,9 @@ void Game::printEntity(Entity *entity, SDL_Renderer *renderer)
   SDL_Rect src = {entity->directionFacing * entity->getOffset(),
                   entity->animationCounter * entity->getOffset(),
                   entity->getOffset(), entity->getOffset()};
-  SDL_Rect dst = {500, 500, 2 * entity->getOffset(), 2 * entity->getOffset()};
+  SDL_Rect dst = {500, 500, scale * entity->getOffset(),
+                  scale * entity->getOffset()};
   SDL_RenderCopy(renderer, entity->getTexture(), &src, &dst);
-
-  if (++entity->animationCounter > entity->getAmountOfChars() - 1) {
-    entity->animationCounter = 0;
-  }
 }
 
 Camera::Camera(std::vector<std::vector<int>> currentLevel, int tileSize,

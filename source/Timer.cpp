@@ -1,18 +1,18 @@
 #include "header/Timer.h"
 #include <SDL2/SDL.h>
 
-Timer *Timer::minstance = NULL;
+Timer *Timer::instance = NULL;
 
 Timer *Timer::getInstance(){
-	if(minstance == NULL){
-		minstance = new Timer();
+	if(instance == NULL){
+		instance = new Timer();
 	}
-	return minstance;
+	return instance;
 }
 
 void Timer::release(){
-	delete minstance;
-	minstance = NULL;
+	delete instance;
+	instance = NULL;
 }
 
 Timer::Timer(){
@@ -39,6 +39,10 @@ void Timer::timeScale(float f){
 
 float Timer::getScale(){
 	return mScale;
+}
+
+int Timer::getElapsedTime(){
+  return mElapsed;
 }
 
 void Timer::update(){

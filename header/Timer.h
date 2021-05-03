@@ -1,7 +1,7 @@
 #pragma once
 
 class Timer{
-	static Timer* minstance;
+	static Timer* instance;
 
 	unsigned int mStart, mElapsed;
 
@@ -18,6 +18,8 @@ public:
 	void reset();
 
 	float getDeltaTime();
+
+        int getElapsedTime();
 
 	void timeScale(float f);
 

@@ -12,8 +12,8 @@
 #include "header/Game.h"
 #include "header/Init.h"
 #include "header/Input.h"
-#include "header/Timer.h"
 #include "header/KeyboardHandler.h"
+#include "header/Timer.h"
 
 #define GREEN                                                                  \
   {                                                                            \
@@ -56,12 +56,14 @@ int main(int argc, char** argv)
       init->getSettingsFromJson("settings/config.json", "Buttons", "up"),
       init->getSettingsFromJson("settings/config.json", "Buttons", "down"),
       init->getSettingsFromJson("settings/config.json", "Buttons", "left"),
-      init->getSettingsFromJson("settings/config.json", "Buttons", "right")};
+      init->getSettingsFromJson("settings/config.json", "Buttons", "right"),
+      init->getSettingsFromJson("settings/config.json", "Buttons", "sprint")};
 
-  const SDL_Scancode UP    = SDL_GetScancodeFromName(keyNames[0].c_str());
-  const SDL_Scancode DOWN  = SDL_GetScancodeFromName(keyNames[1].c_str());
-  const SDL_Scancode LEFT  = SDL_GetScancodeFromName(keyNames[2].c_str());
-  const SDL_Scancode RIGHT = SDL_GetScancodeFromName(keyNames[3].c_str());
+  const SDL_Scancode UP     = SDL_GetScancodeFromName(keyNames[0].c_str());
+  const SDL_Scancode DOWN   = SDL_GetScancodeFromName(keyNames[1].c_str());
+  const SDL_Scancode LEFT   = SDL_GetScancodeFromName(keyNames[2].c_str());
+  const SDL_Scancode RIGHT  = SDL_GetScancodeFromName(keyNames[3].c_str());
+  const SDL_Scancode SPRINT = SDL_GetScancodeFromName(keyNames[4].c_str());
 
   const int cameraMovementByPixels = std::stoi(init->getSettingsFromJson(
       "settings/config.json", "Game", "CameraMovement"));
@@ -142,12 +144,13 @@ int main(int argc, char** argv)
   Rarity common("Common", 2);
   Rarity rare("Rare", 3);
 
-  KeyboardHandler handleKeyboard = KeyboardHandler({UP, DOWN, LEFT, RIGHT});
+  KeyboardHandler handleKeyboard =
+      KeyboardHandler({UP, DOWN, LEFT, RIGHT, SPRINT});
 
   Game*       game       = nullptr;
   Camera*     camera     = nullptr;
   Entity*     player     = nullptr;
-  Timer*      tickTimer      = nullptr;
+  Timer*      tickTimer  = nullptr;
   std::string playerName = "player";
 
   player = new Player(
@@ -156,9 +159,9 @@ int main(int argc, char** argv)
           renderer, init->imageLoader("assets/Entity/Player/betty.png")),
       {500, 500}, 48, 4);
 
-  game   = new Game(init->getBaseDirectory(), tileSize);
-  camera = new Camera(csvFileMap[0], tileSize, init->getDisplayMode());
-  tickTimer  = Timer::getInstance();
+  game      = new Game(init->getBaseDirectory(), tileSize);
+  camera    = new Camera(csvFileMap[0], tileSize, init->getDisplayMode());
+  tickTimer = Timer::getInstance();
 
   // Main loop
   bool done = false;
@@ -207,12 +210,15 @@ int main(int argc, char** argv)
     SDL_Scancode buttonPressed = std::get<1>(_input);
 
     if (command != nullptr) {
-      command->execute(*camera, cameraMovementByPixels);
-    }
 
-    // CHECK_RESULT(game->printTiles(csvFileMap, renderer, tiles,
-    // camera->getPos(),
-    //                               tileScale));
+      command->execute(*camera, cameraMovementByPixels);
+      if (!player->isMoving()) { player->toggleMovement(); }
+    } else {
+      if (player->isMoving()) {
+        player->toggleMovement();
+        player->animationCounter = 0;
+      }
+    }
 
     int temp = player->directionFacing;
 
@@ -225,14 +231,15 @@ int main(int argc, char** argv)
     } else if (buttonPressed == LEFT) {
       player->directionFacing = 1;
     }
-    if(tickTimer->getDeltaTime() >= 10.0f / ImGui::GetIO().Framerate){
-      // printf("sdf");
-      game->printEntity(player, renderer);
-      tickTimer->reset();
-      SDL_GL_SwapWindow(window);
-    }
+    CHECK_RESULT(game->printTiles(csvFileMap, renderer, tiles, camera->getPos(),
+                                  tileScale));
+
+    game->printEntity(player, renderer, 4);
+
+    if (player->isMoving()) { player->setFrame(tickTimer->getElapsedTime()); }
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    SDL_GL_SwapWindow(window);
   }
 
   // Cleanup
@@ -247,228 +254,3 @@ int main(int argc, char** argv)
 
   return 0;
 }
-
-/*
-int main(int argc, char **argv)
-{
-  CHECK_RESULT(!SDL_Init(SDL_INIT_EVERYTHING));
-
-  const char* glsl_version = "#version 130";
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,
-SDL_GL_CONTEXT_PROFILE_CORE);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-
-  //TTF_Init();
-
-  // Create Init class
-  Init *init = new Init(argv[0], tileSize);
-
-  std::vector<std::string> keyNames{
-      init->getSettingsFromJson("settings/config.json", "Buttons", "up"),
-      init->getSettingsFromJson("settings/config.json", "Buttons", "down"),
-      init->getSettingsFromJson("settings/config.json", "Buttons", "left"),
-      init->getSettingsFromJson("settings/config.json", "Buttons", "right")};
-
-  const SDL_Scancode UP    = SDL_GetScancodeFromName(keyNames[0].c_str());
-  const SDL_Scancode DOWN  = SDL_GetScancodeFromName(keyNames[1].c_str());
-  const SDL_Scancode LEFT  = SDL_GetScancodeFromName(keyNames[2].c_str());
-  const SDL_Scancode RIGHT = SDL_GetScancodeFromName(keyNames[3].c_str());
-
-  const int cameraMovementByPixels = std::stoi(init->getSettingsFromJson(
-      "settings/config.json", "Game", "CameraMovement"));
-
-  KeyboardHandler keyboard({UP, DOWN, LEFT, RIGHT});
-
-  int windowWidth  = init->getDisplayMode().w;
-  int windowHeight = init->getDisplayMode().h;
-
-  SDL_Rect backgroundRect{0, 0, windowWidth, windowHeight};
-
-  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-  SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-  SDL_WindowFlags window_flags = (SDL_WindowFlags)(
-        SDL_WINDOW_OPENGL |
-        SDL_WINDOW_BORDERLESS |
-        SDL_WINDOW_ALLOW_HIGHDPI);
-  SDL_Window *window = SDL_CreateWindow(
-      "Loading...", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-      windowWidth / scale, windowHeight / scale,
-      window_flags);
-
-  SDL_Rect loadingRect{0, 0, windowWidth / scale, windowHeight / scale};
-
-  SDL_Renderer *renderer =
-      SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-
-  SDL_Surface *loading = init->imageLoader("assets/Loading/Loading.jpeg");
-
-  SDL_RenderCopy(renderer, SDL_CreateTextureFromSurface(renderer, loading),
-                 NULL, &loadingRect);
-  SDL_RenderPresent(renderer);
-
-  // Loads Needed to be done
-  Gui* gui = nullptr;
-  TTF_Font* font = init->LoadFont("DisposableDroidBB.ttf", 12);
-
-  KeyboardHandler handleKeyboard = KeyboardHandler({UP, DOWN, LEFT, RIGHT});
-
-  SDL_Surface *background = init->imageLoader("assets/MainMenu/MainMenu.png");
-  SDL_SetSurfaceBlendMode(background, SDL_BLENDMODE_NONE);
-
-  SDL_Surface *playerSurface =
-      init->imageLoader("assets/Entity/Player/betty.png");
-
-  Rarity garbage("Garbage", 0);
-  Rarity uncommon("Uncommon", 1);
-  Rarity common("Common", 2);
-  Rarity rare("Rare", 3);
-
-  // Destroy Loading Window objects
-
-  SDL_DestroyWindow(window);
-  SDL_FreeSurface(loading);
-
-
-  // Create Main Window and Screen objects
-  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-  SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-  window   = SDL_CreateWindow("Legend Of Heros", SDL_WINDOWPOS_CENTERED,
-                            SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight,
-                            window_flags | SDL_WINDOW_FULLSCREEN);
-
-  SDL_GLContext gl_context = SDL_GL_CreateContext(window);
-  SDL_GL_MakeCurrent(window, gl_context);
-
-  IMGUI_CHECKVERSION();
-  ImGui::CreateContext();
-  ImGuiIO& io = ImGui::GetIO(); (void)io;
-  ImGui::StyleColorsDark();
-  ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
-  ImGui_ImplOpenGL3_Init(glsl_version);
-
-  renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-  SDL_Surface *t_tiles = init->imageLoader("assets/tiles.png");
-  SDL_Texture *tiles   = SDL_CreateTextureFromSurface(renderer, t_tiles);
-  SDL_FreeSurface(t_tiles);
-
-  //gui = new Gui(window, renderer, init);
-
-
-  SDL_Log("Created renderer for main window");
-  SDL_Event e;
-
-  SDL_Color color{181, 50, 22, 1};
-  Button    playButton(windowWidth / 2 - 200, windowHeight / 3 * 2, 400, 150,
-                    color);
-
-  bool menuIsRunning = false;
-  int  location      = MAINMENU;
-
-  while (menuIsRunning) {
-    while (SDL_PollEvent(&e)) {
-      ImGui_ImplSDL2_ProcessEvent(&event);
-
-      if (playButton.isClick()) {
-        location      = INGAME;
-        menuIsRunning = false;
-        break;
-      }
-      switch (e.type) {
-      case SDL_QUIT: menuIsRunning = false; break;
-      case SDL_KEYDOWN:
-        if (e.key.keysym.sym == SDLK_ESCAPE) {
-          menuIsRunning = false;
-          break;
-        }
-      }
-    }
-    SDL_RenderCopy(renderer, SDL_CreateTextureFromSurface(renderer,
-background), NULL, &backgroundRect); playButton.print(renderer);
-    SDL_RenderPresent(renderer);
-  }
-
-  location           = INGAME;
-  bool gameIsRunning = true;
-
-  std::vector<std::vector<std::vector<int>>> csvFileMap{
-      init->getCSVvector("assets/Map/Back.csv"),
-      init->getCSVvector("assets/Map/Middle.csv"),
-      init->getCSVvector("assets/Map/Front.csv")};
-
-  Game *  game   = nullptr;
-  Camera *camera = nullptr;
-
-  if (location == INGAME) {
-    game   = new Game(init->getBaseDirectory(), tileSize);
-    camera = new Camera(csvFileMap[0], tileSize, init->getDisplayMode());
-  }
-
-  bool update    = true;
-  int  direction = 0;
-
-  std::string playerName = "player";
-
-  Player *player =
-      new Player(playerName, 100, 10, garbage, playerSurface, {0, 0});
-
-  std::cout << "If you don\'t see this it didnt get to line number " <<
-__LINE__
-            << " from file " << __FILE__ << std::endl;
-
-  while (gameIsRunning && location == INGAME) {
-    Uint64 start = SDL_GetPerformanceCounter();
-    while (SDL_PollEvent(&e)) {
-      switch (e.type) {
-      case SDL_QUIT: gameIsRunning = false; break;
-      case SDL_KEYDOWN:
-        if (e.key.keysym.sym == SDLK_ESCAPE) {
-          gameIsRunning = false;
-          break;
-        }
-      }
-    }
-
-    auto         _input        = handleKeyboard.handleInput();
-    Command *    command       = std::get<0>(_input);
-    SDL_Scancode buttonPressed = std::get<1>(_input);
-
-    if (command != nullptr) {
-      command->execute(*camera, cameraMovementByPixels);
-    }
-
-    CHECK_RESULT(game->printTiles(csvFileMap, renderer, tiles,
-camera->getPos(), tileScale));
-
-    int temp = direction;
-
-    if (buttonPressed == UP) {
-      direction = 2;
-    } else if (buttonPressed == DOWN) {
-      direction = 0;
-    } else if (buttonPressed == RIGHT) {
-      direction = 3;
-    } else if (buttonPressed == LEFT) {
-      direction = 1;
-    }
-    game->printEntity(player, renderer, direction);
-    Uint64 end = SDL_GetPerformanceCounter();
-
-    float elapsed = (end - start) / (float)SDL_GetPerformanceFrequency();
-
-    //gui->addText("Current FPS: " + std::to_string(int(1.0f / elapsed)),
-{windowWidth, 0}, font, GREEN, 10);
-
-    SDL_RenderPresent(renderer);
-
-  }
-  SDL_DestroyRenderer(renderer);
-  SDL_FreeSurface(background);
-  SDL_DestroyWindow(window);
-  SDL_Quit();
-  return 0;
-}
-*/
