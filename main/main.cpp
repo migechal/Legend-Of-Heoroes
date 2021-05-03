@@ -52,10 +52,10 @@ int main(int argc, char** argv)
   Init* init = new Init(argv[0], tileSize);
 
   std::vector<std::string> keyNames{
-    init->getSettingsFromJson("settings/config.json", "Buttons", "up"),
-    init->getSettingsFromJson("settings/config.json", "Buttons", "down"),
-    init->getSettingsFromJson("settings/config.json", "Buttons", "left"),
-    init->getSettingsFromJson("settings/config.json", "Buttons", "right")};
+      init->getSettingsFromJson("settings/config.json", "Buttons", "up"),
+      init->getSettingsFromJson("settings/config.json", "Buttons", "down"),
+      init->getSettingsFromJson("settings/config.json", "Buttons", "left"),
+      init->getSettingsFromJson("settings/config.json", "Buttons", "right")};
 
   const SDL_Scancode UP    = SDL_GetScancodeFromName(keyNames[0].c_str());
   const SDL_Scancode DOWN  = SDL_GetScancodeFromName(keyNames[1].c_str());
@@ -70,16 +70,15 @@ int main(int argc, char** argv)
   int windowWidth  = init->getDisplayMode().w;
   int windowHeight = init->getDisplayMode().h;
 
-
   // // Create window with graphics context
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
   SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
   SDL_WindowFlags window_flags = (SDL_WindowFlags)(
       SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_ALLOW_HIGHDPI);
-  SDL_Window* window =
-      SDL_CreateWindow("Imeto na egrata", SDL_WINDOWPOS_CENTERED,
-                       SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, window_flags);
+  SDL_Window* window = SDL_CreateWindow(
+      "Imeto na egrata", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+      windowWidth, windowHeight, window_flags);
   SDL_GLContext gl_context = SDL_GL_CreateContext(window);
 
   SDL_GL_MakeCurrent(window, gl_context);
@@ -123,44 +122,51 @@ int main(int argc, char** argv)
   // Our state
   ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-
-
-
   auto renderer = SDL_CreateRenderer(
       window, oglIdx, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
   SDL_Texture* text = SDL_CreateTextureFromSurface(
       renderer, init->imageLoader("assets/Loading/Loading.jpeg"));
 
-
   std::vector<std::vector<std::vector<int>>> csvFileMap{
-    init->getCSVvector("assets/Map/Back.csv"),
-    init->getCSVvector("assets/Map/Middle.csv"),
-    init->getCSVvector("assets/Map/Front.csv")};
+      init->getCSVvector("assets/Map/Back.csv"),
+      init->getCSVvector("assets/Map/Middle.csv"),
+      init->getCSVvector("assets/Map/Front.csv")};
 
-
-  SDL_Surface *t_tiles = init->imageLoader("assets/tiles.png");
-  SDL_Texture *tiles   = SDL_CreateTextureFromSurface(renderer, t_tiles);
+  SDL_Surface* t_tiles = init->imageLoader("assets/tiles.png");
+  SDL_Texture* tiles   = SDL_CreateTextureFromSurface(renderer, t_tiles);
   SDL_FreeSurface(t_tiles);
 
+  Rarity garbage("Garbage", 0);
+  Rarity uncommon("Uncommon", 1);
+  Rarity common("Common", 2);
+  Rarity rare("Rare", 3);
 
   KeyboardHandler handleKeyboard = KeyboardHandler({UP, DOWN, LEFT, RIGHT});
 
-  Game *  game   = nullptr;
-  Camera *camera = nullptr;
+  Game*       game       = nullptr;
+  Camera*     camera     = nullptr;
+  Entity*     player     = nullptr;
+  std::string playerName = "player";
 
+  player = new Player(
+      playerName.c_str(), 100, 10, garbage,
+      SDL_CreateTextureFromSurface(
+          renderer, init->imageLoader("assets/Entity/Player/betty.png")),
+      {500, 500}, 48, 4);
 
   game   = new Game(init->getBaseDirectory(), tileSize);
   camera = new Camera(csvFileMap[0], tileSize, init->getDisplayMode());
-  int direction = 0;
+
   // Main loop
   bool done = false;
+
   while (!done) {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
       ImGui_ImplSDL2_ProcessEvent(&event);
       if (event.type == SDL_QUIT) done = true;
-      if(event.type == SDL_KEYDOWN){
-        if(event.key.keysym.sym == SDLK_ESCAPE){
+      if (event.type == SDL_KEYDOWN) {
+        if (event.key.keysym.sym == SDLK_ESCAPE) {
           done = true;
           break;
         }
@@ -171,9 +177,6 @@ int main(int argc, char** argv)
         done = true;
     }
 
-
-
-
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(window);
@@ -181,10 +184,11 @@ int main(int argc, char** argv)
 
     {
       ImGui::Begin("Game Panel"); // Create a window called "Hello, world!"
-                                     // and append into it.
+                                  // and append into it.
 
       ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
-                  1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+                  1000.0f / ImGui::GetIO().Framerate,
+                  ImGui::GetIO().Framerate);
       ImGui::End();
     }
     // Rendering
@@ -193,34 +197,31 @@ int main(int argc, char** argv)
     glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
     glClear(GL_COLOR_BUFFER_BIT);
 
-
-
     auto         _input        = handleKeyboard.handleInput();
-    Command *    command       = std::get<0>(_input);
+    Command*     command       = std::get<0>(_input);
     SDL_Scancode buttonPressed = std::get<1>(_input);
 
     if (command != nullptr) {
       command->execute(*camera, cameraMovementByPixels);
     }
 
-    CHECK_RESULT(game->printTiles(csvFileMap, renderer, tiles, camera->getPos(),
-                                  tileScale));
+    // CHECK_RESULT(game->printTiles(csvFileMap, renderer, tiles,
+    // camera->getPos(),
+    //                               tileScale));
 
-    int temp = direction;
+    int temp = player->directionFacing;
 
     if (buttonPressed == UP) {
-      direction = 2;
+      player->directionFacing = 2;
     } else if (buttonPressed == DOWN) {
-      direction = 0;
+      player->directionFacing = 0;
     } else if (buttonPressed == RIGHT) {
-      direction = 3;
+      player->directionFacing = 3;
     } else if (buttonPressed == LEFT) {
-      direction = 1;
+      player->directionFacing = 1;
     }
-    // game->printEntity(player, renderer, direction);
 
-    // SDL_RenderPresent(renderer);
-
+    game->printEntity(player, renderer);
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     SDL_GL_SwapWindow(window);
@@ -245,7 +246,8 @@ int main(int argc, char **argv)
 
   const char* glsl_version = "#version 130";
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,
+SDL_GL_CONTEXT_PROFILE_CORE);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 
@@ -375,9 +377,8 @@ int main(int argc, char **argv)
         }
       }
     }
-    SDL_RenderCopy(renderer, SDL_CreateTextureFromSurface(renderer, background),
-                   NULL, &backgroundRect);
-    playButton.print(renderer);
+    SDL_RenderCopy(renderer, SDL_CreateTextureFromSurface(renderer,
+background), NULL, &backgroundRect); playButton.print(renderer);
     SDL_RenderPresent(renderer);
   }
 
@@ -405,7 +406,8 @@ int main(int argc, char **argv)
   Player *player =
       new Player(playerName, 100, 10, garbage, playerSurface, {0, 0});
 
-  std::cout << "If you don\'t see this it didnt get to line number " << __LINE__
+  std::cout << "If you don\'t see this it didnt get to line number " <<
+__LINE__
             << " from file " << __FILE__ << std::endl;
 
   while (gameIsRunning && location == INGAME) {
@@ -429,8 +431,8 @@ int main(int argc, char **argv)
       command->execute(*camera, cameraMovementByPixels);
     }
 
-    CHECK_RESULT(game->printTiles(csvFileMap, renderer, tiles, camera->getPos(),
-                                  tileScale));
+    CHECK_RESULT(game->printTiles(csvFileMap, renderer, tiles,
+camera->getPos(), tileScale));
 
     int temp = direction;
 

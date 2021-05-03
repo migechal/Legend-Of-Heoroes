@@ -6,7 +6,8 @@
 #include <map>
 #include <string>
 #include <vector>
-class Game {
+class Game
+{
   std::vector<int> hitboxes;
   int              tileSize;
   std::string      baseDir;
@@ -19,13 +20,14 @@ public:
   Game(std::string baseDirectoryLocation, int tileSize);
   enum Positions { UP = 0, DOWN = 1, RIGHT = 2, LEFT = 3 };
   bool checkHitbox(int x, int y, std::vector<std::string> tileLocation);
-  void printEntity(Entity *entity, SDL_Renderer* renderer, int facing);
+  void printEntity(Entity *entity, SDL_Renderer *renderer);
   int  printTiles(std::vector<std::vector<std::vector<int>>> csv,
-                  SDL_Renderer* renderer, SDL_Texture *tiles, SDL_Rect position,
+                  SDL_Renderer *renderer, SDL_Texture *tiles, SDL_Rect position,
                   int tileScale);
 };
 
-class Camera {
+class Camera
+{
   SDL_Rect                      cameraPosition = {0, 0, 0, 0};
   int                           tileSize;
   SDL_Rect                      levelSize;
@@ -36,5 +38,5 @@ public:
   Camera(std::vector<std::vector<int>> currentLevel, int tileSize,
          SDL_DisplayMode Display);
   void     move(SDL_Rect loc);
-  SDL_Rect getPos( );
+  SDL_Rect getPos();
 };

@@ -1,38 +1,46 @@
 #include "header/Entity.h"
+#include <SDL2/SDL.h>
 #include <bits/stdc++.h>
 
 Rarity::Rarity(std::string name, int rarity) : rarity(rarity), name(name) {}
 
 Entity::Entity(int defaultHealth, int defaultDamage, Rarity rarity,
-               SDL_Surface *surface, SDL_Rect position, bool hidden)
+               SDL_Texture *texture, SDL_Rect position, int directionFacing,
+               int offset, int amountOfChars, bool hidden)
     : defaultHealth(defaultHealth),
       defaultDamage(defaultDamage),
       damage(defaultDamage),
-      health(defaultHealth),
       rarity(rarity),
-      surface(surface),
+      texture(texture),
       position(position),
+      directionFacing(directionFacing),
+      offset(offset),
+      amountOfChars(amountOfChars),
       hidden(hidden),
+      health(defaultHealth),
       animationCounter(0)
 {
 }
 
-int         Entity::getHealth() { return health; }
-int         Entity::getDamage() { return damage; }
-Rarity      Entity::getRarity() { return rarity; }
-bool        Entity::getIsHidden() { return hidden; }
-std::string Entity::getName() { return name; }
+int          Entity::getHealth() { return health; }
+int          Entity::getDamage() { return damage; }
+Rarity       Entity::getRarity() { return rarity; }
+bool         Entity::getIsHidden() { return hidden; }
+std::string  Entity::getName() { return name; }
+int          Entity::getOffset() { return offset; }
+int          Entity::getAmountOfChars() { return amountOfChars; }
+SDL_Texture *Entity::getTexture() { return texture; }
 
 void Entity::decreaseHealth(int decrease) { health -= decrease; }
 void Entity::setDamage(int newDamage) { damage = newDamage; }
-void Entity::setPosition(SDL_Rect newPosition) { position = newPosition; }
 
 int *Entity::getEntityTile(int x, int y) { return 0; }
 
 Player::Player(std::string name, int defaultHealth, int defaultDamage,
-               Rarity rarity, SDL_Surface *surface, SDL_Rect position,
-               bool hidden)
-    : Entity(defaultHealth, defaultDamage, rarity, surface, position, false)
+               Rarity rarity, SDL_Texture *texture, SDL_Rect position,
+               int offset, int amountOfChars, bool hidden)
+    : Entity(defaultHealth, defaultDamage, rarity, texture, position,
+             DirectionFacing::DOWN, offset, amountOfChars, false)
 {
   this->name = name;
 }

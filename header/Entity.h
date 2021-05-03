@@ -1,6 +1,5 @@
 #pragma once
-#include <SDL2/SDL_rect.h>
-#include <SDL2/SDL_surface.h>
+#include <SDL2/SDL.h>
 #include <string>
 #include <vector>
 
@@ -15,34 +14,40 @@ struct Rarity {
 class Entity
 {
 protected:
-  SDL_Rect position;
-
   std::vector<int> inventory;
-  SDL_Surface *    surface;
+  SDL_Texture *    texture;
   Rarity           rarity;
   bool             hidden;
   int              health;
   int              defaultHealth;
   int              defaultDamage;
   int              damage;
-  int              animationCounter;
+  int              offset;
+  int              amountOfChars;
   std::string      name;
 
 public:
   enum DirectionFacing { DOWN = 0, LEFT = 1, UP = 2, RIGHT = 3 };
   Entity(int defaultHealth, int defaultDamage, Rarity rarity,
-         SDL_Surface *surface, SDL_Rect position, bool hidden = false);
-  int         getHealth();
-  int         getDamage();
-  Rarity      getRarity();
-  int         getItem(int index);
-  bool        getIsHidden();
-  std::string getName();
+         SDL_Texture *texture, SDL_Rect position, int directionFacing,
+         int offset, int amountOfChars, bool hidden = false);
+
+  SDL_Rect     position;
+  int          animationCounter;
+  int          directionFacing;
+  int          getHealth();
+  int          getDamage();
+  Rarity       getRarity();
+  int          getItem(int index);
+  bool         getIsHidden();
+  int          getOffset();
+  int          getAmountOfChars();
+  std::string  getName();
+  SDL_Texture *getTexture();
 
   void giveItem(int itemID);
   void decreaseHealth(int decrease);
   void setDamage(int newDamage);
-  void setPosition(SDL_Rect newposition);
   int *getEntityTile(int x, int y);
 };
 class Ememy : public Entity
@@ -77,5 +82,6 @@ class Player : public Entity
 {
 public:
   Player(std::string name, int defaultHealth, int defaultDamage, Rarity rarity,
-         SDL_Surface *surface, SDL_Rect position, bool hidden = false);
+         SDL_Texture *texture, SDL_Rect position, int offset, int amountOfChars,
+         bool hidden = false);
 };

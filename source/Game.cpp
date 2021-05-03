@@ -58,9 +58,7 @@ int Game::printTiles(std::vector<std::vector<std::vector<int>>> csv,
   if (renderer == nullptr) { SDL_Log("render cannot be null"); }
   Init *get = new Init("n", 0);
 
-
   CHECK_RESULT(tiles);
-
 
   /*
    Remember, start from back to front.
@@ -84,7 +82,7 @@ int Game::printTiles(std::vector<std::vector<std::vector<int>>> csv,
             static_cast<int>(destTileSize * row) - position.y * tileSize / 2,
             destTileSize, destTileSize};
         if (csv[i][row][col] != -1) {
-          SDL_Rect     src{(csv[i][row][col] % tileSize) * srcTileSize,
+          SDL_Rect src{(csv[i][row][col] % tileSize) * srcTileSize,
                        (csv[i][row][col] / tileSize) * srcTileSize, srcTileSize,
                        srcTileSize};
           // SDL_Log("Rendering map...");
@@ -96,7 +94,24 @@ int Game::printTiles(std::vector<std::vector<std::vector<int>>> csv,
   return 1;
 }
 
-void Game::printEntity(Entity *entity, SDL_Renderer *renderer, int facing) {}
+void Game::printEntity(Entity *entity, SDL_Renderer *renderer)
+{
+  // entity->animationCounter = 3;s
+
+  if (entity->animationCounter < 0 ||
+      entity->animationCounter > entity->getAmountOfChars() - 1) {
+    std::cout << "animation counter is out of bounds" << std::endl;
+  }
+  SDL_Rect src = {entity->directionFacing * entity->getOffset(),
+                  entity->animationCounter * entity->getOffset(),
+                  entity->getOffset(), entity->getOffset()};
+  SDL_Rect dst = {500, 500, 2 * entity->getOffset(), 2 * entity->getOffset()};
+  SDL_RenderCopy(renderer, entity->getTexture(), &src, &dst);
+
+  if (++entity->animationCounter > entity->getAmountOfChars() - 1) {
+    entity->animationCounter = 0;
+  }
+}
 
 Camera::Camera(std::vector<std::vector<int>> currentLevel, int tileSize,
                SDL_DisplayMode Display)
@@ -118,7 +133,4 @@ void Camera::move(SDL_Rect loc)
   cameraPosition.x += loc.x;
   cameraPosition.y += loc.y;
 }
-SDL_Rect Camera::getPos()
-{
-  return cameraPosition;
-}
+SDL_Rect Camera::getPos() { return cameraPosition; }
