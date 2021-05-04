@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="Legend Of Heroes"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="game_LIB">
+				<Option output="/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/libgame_LIB.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/migecha/Projects/Games/Legend-Of-Heores/./header"/>
+					<Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/10.2.0/../../../../include/c++/10.2.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/10.2.0/../../../../include/c++/10.2.0/x86_64-unknown-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/10.2.0/../../../../include/c++/10.2.0/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/10.2.0/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/10.2.0/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 game_LIB"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="game_LIB/fast">
+				<Option output="/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/libgame_LIB.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/migecha/Projects/Games/Legend-Of-Heores/./header"/>
+					<Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/10.2.0/../../../../include/c++/10.2.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/10.2.0/../../../../include/c++/10.2.0/x86_64-unknown-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/10.2.0/../../../../include/c++/10.2.0/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/10.2.0/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/10.2.0/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 game_LIB/fast"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="game">
+				<Option output="/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/game" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/migecha/Projects/Games/Legend-Of-Heores/./header"/>
+					<Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/10.2.0/../../../../include/c++/10.2.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/10.2.0/../../../../include/c++/10.2.0/x86_64-unknown-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/10.2.0/../../../../include/c++/10.2.0/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/10.2.0/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/10.2.0/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 game"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="game/fast">
+				<Option output="/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/game" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/migecha/Projects/Games/Legend-Of-Heores/./header"/>
+					<Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/10.2.0/../../../../include/c++/10.2.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/10.2.0/../../../../include/c++/10.2.0/x86_64-unknown-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/10.2.0/../../../../include/c++/10.2.0/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/10.2.0/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/10.2.0/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 game/fast"/>
+					<CompileFile command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j16 -f &quot;/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/header/Entity.h">
+			<Option target="game_LIB"/>
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/header/Game.h">
+			<Option target="game_LIB"/>
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/header/Gui.h">
+			<Option target="game_LIB"/>
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/header/Init.h">
+			<Option target="game_LIB"/>
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/header/Input.h">
+			<Option target="game_LIB"/>
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/header/KeyboardHandler.h">
+			<Option target="game_LIB"/>
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/header/Menu.h">
+			<Option target="game_LIB"/>
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/header/Object.h">
+			<Option target="game_LIB"/>
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/header/Timer.h">
+			<Option target="game_LIB"/>
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/imgui/GL/gl3w.c">
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/imgui/GL/gl3w.h">
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/imgui/GL/glcorearb.h">
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/imgui/imconfig.h">
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/imgui/imgui.cpp">
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/imgui/imgui.h">
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/imgui/imgui_demo.cpp">
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/imgui/imgui_draw.cpp">
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/imgui/imgui_impl_opengl3.cpp">
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/imgui/imgui_impl_opengl3.h">
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/imgui/imgui_impl_sdl.cpp">
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/imgui/imgui_impl_sdl.h">
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/imgui/imgui_internal.h">
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/imgui/imgui_sdl.cpp">
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/imgui/imgui_sdl.h">
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/imgui/imgui_widgets.cpp">
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/imgui/imstb_rectpack.h">
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/imgui/imstb_textedit.h">
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/imgui/imstb_truetype.h">
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/imgui/main.cpp">
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/main/main.cpp">
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/source/Entity.cpp">
+			<Option target="game_LIB"/>
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/source/Game.cpp">
+			<Option target="game_LIB"/>
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/source/Gui.cpp">
+			<Option target="game_LIB"/>
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/source/Init.cpp">
+			<Option target="game_LIB"/>
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/source/Input.cpp">
+			<Option target="game_LIB"/>
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/source/KeyboardHandler.cpp">
+			<Option target="game_LIB"/>
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/source/Menu.cpp">
+			<Option target="game_LIB"/>
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/source/Object.cpp">
+			<Option target="game_LIB"/>
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/source/Timer.cpp">
+			<Option target="game_LIB"/>
+			<Option target="game"/>
+		</Unit>
+		<Unit filename="/home/migecha/Projects/Games/Legend-Of-Heores/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

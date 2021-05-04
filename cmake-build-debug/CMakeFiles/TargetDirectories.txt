@@ -1,0 +1,4 @@
+/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/CMakeFiles/game_LIB.dir
+/home/migecha/Projects/Games/Legend-Of-Heores/cmake-build-debug/CMakeFiles/game.dir

@@ -1,0 +1,2 @@
+/usr/bin/ar qc libgame_LIB.a CMakeFiles/game_LIB.dir/source/Entity.cpp.o CMakeFiles/game_LIB.dir/source/Game.cpp.o CMakeFiles/game_LIB.dir/source/Gui.cpp.o CMakeFiles/game_LIB.dir/source/Init.cpp.o CMakeFiles/game_LIB.dir/source/Input.cpp.o CMakeFiles/game_LIB.dir/source/KeyboardHandler.cpp.o CMakeFiles/game_LIB.dir/source/Menu.cpp.o CMakeFiles/game_LIB.dir/source/Object.cpp.o CMakeFiles/game_LIB.dir/source/Timer.cpp.o
+/usr/bin/ranlib libgame_LIB.a

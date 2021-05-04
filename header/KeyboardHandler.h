@@ -9,55 +9,55 @@ class Command
 
 public:
   virtual ~Command(){};
-  virtual void execute(Camera &camera, int amount) = 0;
+  virtual void execute(Camera &camera, float amount) = 0;
 };
 
 class Up : public Command
 {
 public:
-  void execute(Camera &camera, int amount);
+  void execute(Camera &camera, float amount);
 };
 
 class Down : public Command
 {
 public:
-  void execute(Camera &camera, int amount);
+  void execute(Camera &camera, float amount);
 };
 
 class Left : public Command
 {
 public:
-  void execute(Camera &camera, int amount);
+  void execute(Camera &camera, float amount);
 };
 
 class Right : public Command
 {
 public:
-  void execute(Camera &camera, int amount);
+  void execute(Camera &camera, float amount);
 };
 
 class UpRight : public Command
 {
 public:
-  void execute(Camera &camera, int amount);
+  void execute(Camera &camera, float amount);
 };
 
 class DownRight : public Command
 {
 public:
-  void execute(Camera &camera, int amount);
+  void execute(Camera &camera, float amount);
 };
 
 class UpLeft : public Command
 {
 public:
-  void execute(Camera &camera, int amount);
+  void execute(Camera &camera, float amount);
 };
 
 class DownLeft : public Command
 {
 public:
-  void execute(Camera &camera, int amount);
+  void execute(Camera &camera, float amount);
 };
 
 class KeyboardHandler
@@ -80,4 +80,5 @@ public:
   KeyboardHandler(std::vector<SDL_Scancode> keys);
   std::pair<Command *, SDL_Scancode> handleInput();
   bool                               isSprint();
+  bool                               isSneak();
 };

@@ -19,6 +19,7 @@ Entity::Entity(int defaultHealth, int defaultDamage, Rarity rarity,
       hidden(hidden),
       health(defaultHealth),
       moving(false),
+      speed(1),
       animationCounter(0)
 {
 }
@@ -30,6 +31,12 @@ void Entity::setFrame(int frame)
 {
   animationCounter = frame % getAmountOfChars();
 }
+
+void Entity::increaseAnimationCounter()
+{
+  if (++animationCounter > getAmountOfChars() - 1) { animationCounter = 0; }
+}
+
 int          Entity::getHealth() { return health; }
 int          Entity::getDamage() { return damage; }
 Rarity       Entity::getRarity() { return rarity; }

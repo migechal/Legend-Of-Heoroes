@@ -1,19 +1,21 @@
 #include <bits/stdc++.h>
 
-#include <GL/gl3w.h>
+#include "../imgui/GL/gl3w.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
-#include "imgui/imgui.h"
-#include "imgui/imgui_impl_opengl3.h"
-#include "imgui/imgui_impl_sdl.h"
+#include "../imgui/imgui.h"
+#include "../imgui/imgui_impl_opengl3.h"
+#include "../imgui/imgui_impl_sdl.h"
 
-#include "header/Entity.h"
-#include "header/Game.h"
-#include "header/Init.h"
-#include "header/Input.h"
-#include "header/KeyboardHandler.h"
-#include "header/Timer.h"
+#include "../header/Init.h"
+#include "../header/KeyboardHandler.h"
+#include "../header/Entity.h"
+#include "../header/Game.h"
+#include "../header/Init.h"
+#include "../header/Input.h"
+#include "../header/KeyboardHandler.h"
+#include "../header/Timer.h"
 
 #define GREEN                                                                  \
   {                                                                            \
@@ -31,15 +33,16 @@
     }                                                                          \
   }
 
-const int tileSize  = 32; // Tile Size from "Tiled"
-const int scale     = 4;
-const int tileScale = 3;
+const int tileSize = 32; // Tile Size from "Tiled"
+const int scale    = 4;
+const int tickTime = 50;
 
 enum Location { MAINMENU = 0, INGAME = 1, OPTIONS = 2 };
 
 int main(int argc, char** argv)
 {
   // GL 3.0 + GLSL 130
+  // return 0;
   const char* glsl_version = "#version 130";
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
@@ -57,18 +60,21 @@ int main(int argc, char** argv)
       init->getSettingsFromJson("settings/config.json", "Buttons", "down"),
       init->getSettingsFromJson("settings/config.json", "Buttons", "left"),
       init->getSettingsFromJson("settings/config.json", "Buttons", "right"),
-      init->getSettingsFromJson("settings/config.json", "Buttons", "sprint")};
+      init->getSettingsFromJson("settings/config.json", "Buttons", "sprint"),
+      init->getSettingsFromJson("settings/config.json", "Buttons", "sneak"),
+  };
 
   const SDL_Scancode UP     = SDL_GetScancodeFromName(keyNames[0].c_str());
   const SDL_Scancode DOWN   = SDL_GetScancodeFromName(keyNames[1].c_str());
   const SDL_Scancode LEFT   = SDL_GetScancodeFromName(keyNames[2].c_str());
   const SDL_Scancode RIGHT  = SDL_GetScancodeFromName(keyNames[3].c_str());
   const SDL_Scancode SPRINT = SDL_GetScancodeFromName(keyNames[4].c_str());
+  const SDL_Scancode SNEAK  = SDL_GetScancodeFromName(keyNames[5].c_str());
 
   const int cameraMovementByPixels = std::stoi(init->getSettingsFromJson(
       "settings/config.json", "Game", "CameraMovement"));
 
-  KeyboardHandler keyboard({UP, DOWN, LEFT, RIGHT});
+  KeyboardHandler keyboard({UP, DOWN, LEFT, RIGHT, SPRINT, SNEAK});
 
   int windowWidth  = init->getDisplayMode().w;
   int windowHeight = init->getDisplayMode().h;
@@ -77,7 +83,7 @@ int main(int argc, char** argv)
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
   SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-  SDL_WindowFlags window_flags = (SDL_WindowFlags)(
+  auto window_flags = (SDL_WindowFlags)(
       SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_ALLOW_HIGHDPI);
   SDL_Window* window = SDL_CreateWindow(
       "Imeto na egrata", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -144,9 +150,6 @@ int main(int argc, char** argv)
   Rarity common("Common", 2);
   Rarity rare("Rare", 3);
 
-  KeyboardHandler handleKeyboard =
-      KeyboardHandler({UP, DOWN, LEFT, RIGHT, SPRINT});
-
   Game*       game       = nullptr;
   Camera*     camera     = nullptr;
   Entity*     player     = nullptr;
@@ -154,7 +157,7 @@ int main(int argc, char** argv)
   std::string playerName = "player";
 
   player = new Player(
-      playerName.c_str(), 100, 10, garbage,
+      playerName, 100, 10, garbage,
       SDL_CreateTextureFromSurface(
           renderer, init->imageLoader("assets/Entity/Player/betty.png")),
       {500, 500}, 48, 4);
@@ -205,13 +208,15 @@ int main(int argc, char** argv)
     glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    auto         _input        = handleKeyboard.handleInput();
+    auto         _input        = keyboard.handleInput();
     Command*     command       = std::get<0>(_input);
     SDL_Scancode buttonPressed = std::get<1>(_input);
 
     if (command != nullptr) {
-
-      command->execute(*camera, cameraMovementByPixels);
+      int speed = cameraMovementByPixels;
+      if (keyboard.isSprint()) { speed *= 2; }
+      if (keyboard.isSneak()) { speed *= 0.8; }
+      command->execute(*camera, speed);
       if (!player->isMoving()) { player->toggleMovement(); }
     } else {
       if (player->isMoving()) {
@@ -231,12 +236,16 @@ int main(int argc, char** argv)
     } else if (buttonPressed == LEFT) {
       player->directionFacing = 1;
     }
-    CHECK_RESULT(game->printTiles(csvFileMap, renderer, tiles, camera->getPos(),
-                                  tileScale));
+    CHECK_RESULT(
+        game->printTiles(csvFileMap, renderer, tiles, camera->getPos(), scale));
 
-    game->printEntity(player, renderer, 4);
+    game->printEntity(player, renderer, 5);
 
-    if (player->isMoving()) { player->setFrame(tickTimer->getElapsedTime()); }
+    if (tickTimer->getElapsedTime() >= tickTime) {
+
+      if (player->isMoving()) { player->increaseAnimationCounter(); }
+      tickTimer->reset();
+    }
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     SDL_GL_SwapWindow(window);

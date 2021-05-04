@@ -26,6 +26,7 @@ protected:
   int              amountOfChars;
   std::string      name;
   bool             moving;
+  float            speed;
 
 public:
   enum DirectionFacing { DOWN = 0, LEFT = 1, UP = 2, RIGHT = 3 };
@@ -49,6 +50,7 @@ public:
   SDL_Texture *getTexture();
 
   void giveItem(int itemID);
+  void increaseAnimationCounter();
   void setFrame(int frame);
   void decreaseHealth(int decrease);
   void setDamage(int newDamage);

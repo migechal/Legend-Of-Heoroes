@@ -4,9 +4,10 @@
         "down": "s",
         "left": "a",
         "right": "d",
-        "sprint": "Left Ctrl"
+        "sprint": "Left Ctrl",
+        "sneak": "Left Shift"
     },
     "Game": {
-        "CameraMovement": "1"
+        "CameraMovement": "2"
     }
 }

@@ -4,36 +4,37 @@
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_scancode.h>
+#include <iostream>
 #include <string>
 #include <vector>
 
-void Up::execute(Camera &camera, int amount) { camera.move({0, -amount}); }
+void Up::execute(Camera &camera, float amount) { camera.move({0, -amount}); }
 
-void Down::execute(Camera &camera, int amount) { camera.move({0, amount}); }
+void Down::execute(Camera &camera, float amount) { camera.move({0, amount}); }
 
-void UpRight::execute(Camera &camera, int amount)
+void UpRight::execute(Camera &camera, float amount)
 {
   camera.move({amount, -amount});
 }
 
-void DownRight::execute(Camera &camera, int amount)
+void DownRight::execute(Camera &camera, float amount)
 {
   camera.move({amount, amount});
 }
 
-void UpLeft::execute(Camera &camera, int amount)
+void UpLeft::execute(Camera &camera, float amount)
 {
   camera.move({-amount, -amount});
 }
 
-void DownLeft::execute(Camera &camera, int amount)
+void DownLeft::execute(Camera &camera, float amount)
 {
   camera.move({-amount, amount});
 }
 
-void Left::execute(Camera &camera, int amount) { camera.move({-amount, 0}); }
+void Left::execute(Camera &camera, float amount) { camera.move({-amount, 0}); }
 
-void Right::execute(Camera &camera, int amount) { camera.move({amount, 0}); }
+void Right::execute(Camera &camera, float amount) { camera.move({amount, 0}); }
 
 KeyboardHandler::KeyboardHandler(std::vector<SDL_Scancode> keys) : keys(keys)
 {
@@ -80,5 +81,12 @@ std::pair<Command *, SDL_Scancode> KeyboardHandler::handleInput()
 
 bool KeyboardHandler::isSprint()
 {
+  if (isSneak() == true) { return false; }
   return Keyboard::getInstance().isPressed({keys[4]});
+}
+
+bool KeyboardHandler::isSneak()
+{
+  bool pressed = Keyboard::getInstance().isPressed({keys[5]});
+  return pressed;
 }
